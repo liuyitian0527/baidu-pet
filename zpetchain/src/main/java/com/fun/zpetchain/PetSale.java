@@ -7,25 +7,38 @@ import org.apache.commons.lang3.StringUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.fun.zpetchain.constant.PetConstant;
 import com.fun.zpetchain.model.Pet;
+import com.fun.zpetchain.model.User;
 import com.fun.zpetchain.util.HttpUtil;
 
 public class PetSale {
 
 	public static void main(String[] args) {
-		List<Pet> pets = PetCenter.getMyPetList();
-		for (Pet pet : pets) {
-			 salePet(pet); // 上架
-//			cancleSalePet(pet); // 下架
+
+		for (User user : PetConstant.USERS) {
+			List<Pet> pets = PetCenter.getMyPetList(user);
+			for (Pet pet : pets) {
+				salePet(pet, user); // 上架
+				// cancleSalePet(pet,user); // 下架
+			}
+			System.out.println(user.getName() + "............................上下架结束！");
 		}
-		System.out.println("............................上下架结束！");
 	}
 
-	public static void salePet(Pet pet) {
+	public static User getUser(String name) {
+		for (User user : PetConstant.USERS) {
+			if (user.getName().equalsIgnoreCase(name)) {
+				return user;
+			}
+		}
+		return null;
+	}
+
+	public static void salePet(Pet pet, User user) {
 		String amount = getSalePetAmount(pet);
 		if (StringUtils.isNotBlank(amount)) {
 			String params = getSalePetParams(pet, amount);
 			// 接口调用
-			JSONObject result = HttpUtil.doJsonPost(PetConstant.SALE_PET, params, PetConstant.TIME_OUT, PetConstant.TIME_OUT);
+			JSONObject result = HttpUtil.post(PetConstant.SALE_PET, params, user);
 			if (PetConstant.SUCCESS.equals(result.getString("errorNo"))) {
 				System.out.println("上架成功");
 			} else {
@@ -34,11 +47,11 @@ public class PetSale {
 		}
 	}
 
-	public static void cancleSalePet(Pet pet) {
+	public static void cancleSalePet(Pet pet, User user) {
 		if ("1".equals(pet.getShelfStatus())) {
 			String params = getCancleSalePetParams(pet);
 			// 接口调用
-			JSONObject result = HttpUtil.doJsonPost(PetConstant.CANCEL_SALE_PET, params, PetConstant.TIME_OUT, PetConstant.TIME_OUT);
+			JSONObject result = HttpUtil.post(PetConstant.CANCEL_SALE_PET, params, user);
 			if (result != null && PetConstant.SUCCESS.equals(result.getString("errorNo"))) {
 				System.out.println("下架成功：" + pet);
 				try {

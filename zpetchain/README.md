@@ -9,7 +9,9 @@
 
 2、可选择安装tesseract(图片识别时，通过cmd调用需要。使用tess4j识别不需要)</br>
 
-3、项目导入eclipse配置好后，设置config.properties中的cookie</br>
+3、项目导入eclipse配置好后，设置config.properties中的cookie文件存储路径</br>
 
-4、修改OcrUtil类中Tesseract的配置。
+4、修改OcrUtil类中Tesseract的配置。</br>
+
+5、cookie采用外部存储json格式  例 [{"张三":"cookie字符串"},{"李四":"cookie字符串"}]</br>
 

@@ -9,6 +9,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fun.zpetchain.constant.PetConstant;
 import com.fun.zpetchain.model.Pet;
+import com.fun.zpetchain.model.User;
 import com.fun.zpetchain.util.HttpUtil;
 
 public class PetCenter {
@@ -16,7 +17,7 @@ public class PetCenter {
 	/**
 	 * 我的cw列表
 	 */
-	public static List<Pet> getMyPetList() {
+	public static List<Pet> getMyPetList(User user) {
 		List<Pet> pets = new ArrayList<Pet>();
 		int pageNo = 1, totalCount = 0;
 
@@ -26,7 +27,7 @@ public class PetCenter {
 				String params = getPetListParams(pageNo);
 
 				// 接口调用
-				JSONObject obj = HttpUtil.doJsonPost(PetConstant.MY_PET_LIST, params, PetConstant.TIME_OUT, PetConstant.TIME_OUT);
+				JSONObject obj = HttpUtil.post(PetConstant.MY_PET_LIST, params, user);
 
 				if (obj != null && PetConstant.SUCCESS.equals(obj.getString("errorNo"))) {
 
@@ -47,7 +48,7 @@ public class PetCenter {
 					pageNo++;
 
 				} else {
-					System.out.println("列表获取失败，返回：" + obj);
+					System.out.println(user.getName() + " 宠物列表获取失败，返回：" + obj);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -55,15 +56,15 @@ public class PetCenter {
 			}
 		}
 
-		System.out.println("一共查询到" + totalCount + "只宠物！");
+		System.out.println(user.getName() + " 一共查询到" + totalCount + "只宠物！");
 
-		System.out.println("稀有属性数量查询...开始...");
+		System.out.println(user.getName() + " 稀有属性数量查询...开始...");
 		List<Pet> rePets = new ArrayList<Pet>();
 		for (Pet pet : pets) {
-			Pet info = getPetById(pet.getPetId());
+			Pet info = getPetById(pet.getPetId(), user);
 			rePets.add(info);
 		}
-		System.out.println("稀有属性数量查询...结束...");
+		System.out.println(user.getName() + " 稀有属性数量查询...结束...");
 
 		return rePets;
 	}
@@ -73,12 +74,12 @@ public class PetCenter {
 	 * 
 	 * @param petId
 	 */
-	public static Pet getPetById(String petId) {
+	public static Pet getPetById(String petId, User user) {
 		Pet pet = null;
 		String params = getPetParams(petId);
 
 		// 接口调用
-		JSONObject result = HttpUtil.doJsonPost(PetConstant.GET_PET_BY_ID, params, PetConstant.TIME_OUT, PetConstant.TIME_OUT);
+		JSONObject result = HttpUtil.post(PetConstant.GET_PET_BY_ID, params, user);
 
 		if (result != null && PetConstant.SUCCESS.equals(result.getString("errorNo"))) {
 			JSONObject pJson = result.getJSONObject("data");
@@ -91,7 +92,7 @@ public class PetCenter {
 				JSONObject atr = attrs.getJSONObject(i);
 				String name = atr.getString("name");
 				String value = atr.getString("value");
-				
+
 				if (name.equals("体型")) {
 					if (value.equals("天使")) {
 						pet.setIsAngell(true);
@@ -109,11 +110,6 @@ public class PetCenter {
 		}
 
 		return pet;
-	}
-
-	public static void main(String[] args) {
-		List<Pet> pets = getMyPetList();
-		System.out.println(JSONArray.toJSONString(pets));
 	}
 
 	private static String getPetParams(String petId) {

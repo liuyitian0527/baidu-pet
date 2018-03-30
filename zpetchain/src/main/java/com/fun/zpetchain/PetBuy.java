@@ -1,16 +1,9 @@
 package com.fun.zpetchain;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
-
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,67 +12,59 @@ import com.alibaba.fastjson.JSONObject;
 import com.fun.zpetchain.constant.PetConstant;
 import com.fun.zpetchain.enums.PetEnum;
 import com.fun.zpetchain.model.Pet;
+import com.fun.zpetchain.model.User;
+import com.fun.zpetchain.model.VerCode;
+import com.fun.zpetchain.task.VerCodeTask;
 import com.fun.zpetchain.util.FileUtil;
 import com.fun.zpetchain.util.HttpUtil;
-import com.fun.zpetchain.util.OcrUtil;
 import com.fun.zpetchain.util.PropUtil;
 import com.fun.zpetchain.util.TimeUtil;
 
+/**
+ * 
+ * Title.宠物购买类 <br>
+ * Description.
+ * <p>
+ * Copyright: Copyright (c) 2018-3-31 上午12:35:35
+ * <p>
+ * Author: liuyt
+ * <p>
+ * Version: 1.0
+ * <p>
+ */
 public class PetBuy {
 
 	private static final Logger logger = LoggerFactory.getLogger(PetBuy.class);
 
-	/**
-	 * key=rare degree, value=price limit when price <= price limit, try purchase
-	 */
 	private final static Map<String, Integer> LIMIT_MAP = new HashMap<String, Integer>();
 
 	/**
-	 * 筛选条件: 卓越 休息0分钟 状态 正常
+	 * main方法启动购买
+	 * 
+	 * @param args
 	 */
-	private final static String FILTER_COND_EXC = "{\"1\":\"2\",\"3\":\"0-1\",\"6\":\"1\"}";
-	/**
-	 * 筛选条件: 史诗 休息不限 状态 正常
-	 */
-	private final static String FILTER_COND_EPIC = "{\"1\":\"3\",\"6\":\"1\"}";
-	/**
-	 * 筛选条件: 神话 休息不限 状态 正常
-	 */
-	private final static String FILTER_COND_MYTH = "{\"1\":\"4\",\"6\":\"1\"}";
-
-	/**
-	 * when captcha is wrong, try more times
-	 */
-	private final static int RETRY_TIMES = 10;
-
 	public static void main(String[] args) {
-
-		PetBuy petChain = new PetBuy();
+		final PetBuy petChain = new PetBuy();
 		try {
 			petChain.initProp();
+			VerCodeTask.init();
 		} catch (Exception e) {
 			logger.error("load properties fail, stop...");
 		}
 
-		while (true) {
-			try {
-				// petChain.queryMarket(SORT_TYPE_AMT,
-				// FILTER_COND_MYTH);
-				// Thread.sleep(200);
-
-				petChain.queryMarket(PetConstant.SORT_TYPE_AMT, "{\"1\":\"3\",\"6\":\"1\"}");
-
-				// petChain.queryMarket(SORT_TYPE_AMT,
-				// FILTER_COND_EPIC);
-				// petChain.queryMarket(SORT_TYPE_AMT,
-				// FILTER_COND_MYTH);
-				Thread.sleep(1000);
-				// // Thread.sleep(200);
-				// petChain.queryMarket(SORT_TYPE_TIME);
-				//
-			} catch (Exception e) {
-				logger.warn("exception:" + e.getMessage());
-			}
+		for (final User user : PetConstant.USERS) {
+			new Thread(new Runnable() {
+				public void run() {
+					while (true) {
+						try {
+							petChain.queryPetsOnSale(PetConstant.SORT_TYPE_AMT, PetConstant.FILTER_COND_EPIC, user);
+							Thread.sleep(1000);
+						} catch (Exception e) {
+							logger.warn("exception:" + e.getMessage());
+						}
+					}
+				}
+			}).start();
 		}
 	}
 
@@ -100,7 +85,7 @@ public class PetBuy {
 	 * @since
 	 * @param sortType
 	 */
-	private void queryMarket(String sortType, String filterCondition) {
+	private void queryPetsOnSale(String sortType, String filterCondition, User user) {
 		Map<String, Object> paraMap = new HashMap<String, Object>(16);
 		paraMap.put("appId", 1);
 		paraMap.put("lastAmount", "");
@@ -119,19 +104,19 @@ public class PetBuy {
 
 		String data = JSONObject.toJSONString(paraMap);
 
-		JSONObject jsonResult = HttpUtil.doJsonPost(PetConstant.QUERY_PETS_ON_SALE, data, 1000, 1000);
+		JSONObject jsonResult = HttpUtil.post(PetConstant.QUERY_PETS_ON_SALE, data, user);
 
 		if (jsonResult != null && "success".equals(jsonResult.get("errorMsg"))) {
 			List<Pet> petArr = JSONArray.parseArray(jsonResult.getJSONObject("data").getJSONArray("petsOnSale").toString(), Pet.class);
-			int retry = 0;
+			int trycount = 1;
 			// 找出命中售价的宠物
-			Pet pet = choosePetFromPetArr(petArr, sortType);
+			Pet pet = choosePetFromPetArr(petArr, sortType, user);
 			if (pet != null) {
-				logger.info("尝试购买 售价:{}, 等级:{}, 休息:{}, petId:{}", pet.getAmount(), pet.getRareDegree(), pet.getCoolingInterval(), pet.getPetId());
-				logger.info("try to putchase...");
-				while (retry <= RETRY_TIMES) {
-					retry++;
-					if (purchase(pet)) {
+				logger.info(user.getName() + " 尝试购买 售价:{}, 等级:{}, 休息:{}, petId:{}", pet.getAmount(), pet.getRareDegree(), pet.getCoolingInterval(),
+						pet.getPetId());
+				while (trycount <= PetConstant.TYR_COUNT) {
+					trycount++;
+					if (tryBuy(pet, user)) {
 						break;
 					} else {
 						try {
@@ -154,7 +139,7 @@ public class PetBuy {
 	 * @param sortType
 	 * @return
 	 */
-	private Pet choosePetFromPetArr(List<Pet> petArr, String sortType) {
+	private Pet choosePetFromPetArr(List<Pet> petArr, String sortType, User user) {
 
 		// 每代里面价格最低的宠物
 		Map<String, Pet> lowestPetMap = new HashMap<String, Pet>(16);
@@ -181,8 +166,8 @@ public class PetBuy {
 		for (String degree : Pet.levelValueMap.keySet()) {
 			Pet petPrt = lowestPetMap.get(degree);
 			if (petPrt != null) {
-				System.out.println(String.format("%s: 售价:%s, 等级:%s, 休息:%s, petId:%s", sortType, petPrt.getAmount(), petPrt.getRareDegree(),
-						petPrt.getCoolingInterval(), petPrt.getPetId()));
+				System.out.println(String.format(user.getName() + "  %s: 售价:%s, 等级:%s, 休息:%s, petId:%s", sortType, petPrt.getAmount(),
+						petPrt.getRareDegree(), petPrt.getCoolingInterval(), petPrt.getPetId()));
 			}
 		}
 
@@ -198,31 +183,30 @@ public class PetBuy {
 	}
 
 	/**
-	 * try to purchase, if success or others have purchased, don't purchase again
+	 * 尝试购买
 	 * 
-	 * @author 2bears
-	 * @since
 	 * @param pet
-	 * @return true-can try again false-don't try again
+	 * @param user
+	 * @return
 	 */
-	private boolean purchase(Pet pet) {
-		Map<String, String> vCodeMap = getCaptcha();
-		if (vCodeMap == null) {
+	private boolean tryBuy(Pet pet, User user) {
+		VerCode verCode = VerCodeTask.getVerCodeInfo(user);
+		if (verCode == null) {
 			return false;
 		}
 		Map<String, Object> paraMap = new HashMap<String, Object>(16);
 		paraMap.put("appId", 1);
 		paraMap.put("tpl", "");
 		paraMap.put("requestId", System.currentTimeMillis());
-		paraMap.put("seed", vCodeMap.get("seed"));
-		paraMap.put("captcha", vCodeMap.get("vCode"));
+		paraMap.put("seed", verCode.getSeed());
+		paraMap.put("captcha", verCode.getvCode());
 		paraMap.put("petId", pet.getPetId());
 		paraMap.put("validCode", pet.getValidCode());
 		paraMap.put("amount", pet.getAmount());
 		String data = JSONObject.toJSONString(paraMap);
 
 		try {
-			JSONObject jsonResult = HttpUtil.doJsonPost(PetConstant.TXN_CREATE, data, 1000 * 3, 1000 * 3);
+			JSONObject jsonResult = HttpUtil.post(PetConstant.TXN_CREATE, data, user);
 
 			if (jsonResult != null) {
 				logger.info(jsonResult.toString());
@@ -233,8 +217,8 @@ public class PetBuy {
 				String errorMsg = jsonResult.getString("errorMsg");
 				String errorNo = jsonResult.getString("errorNo");
 				if (errorNo.equals("00")) {
-					String str = String.format("购买成功！交易时间：%s, petId:%s, 售价：%s, 等级:%s, 休息时间：%s ", TimeUtil.now(TimeUtil.TARGET_1), pet.getId(),
-							pet.getAmount(), pet.getRareDegree(), pet.getCoolingInterval());
+					String str = String.format(user.getName() + " 购买成功！交易时间：%s, petId:%s, 售价：%s, 等级:%s, 休息时间：%s ", TimeUtil.now(TimeUtil.TARGET_1),
+							pet.getId(), pet.getAmount(), pet.getRareDegree(), pet.getCoolingInterval());
 					FileUtil.appendTxt(str + "\n", "E:\\购买记录.txt");
 					System.out.println(str);
 					Thread.sleep(1000 * 60 * 3);
@@ -249,63 +233,56 @@ public class PetBuy {
 				return false;
 			}
 		} catch (Exception e) {
-			System.out.println("purchase error:" + e.getMessage());
+			System.out.println(user.getName() + " purchase error:" + e.getMessage());
 			return false;
 		}
 	}
 
-	/**
-	 * get the captcha from interface, and then identify the captcha by OCR
-	 * 
-	 * @author 2bears
-	 * @since
-	 * @return Map: captcha seed and captcha code
-	 */
-	private Map<String, String> getCaptcha() {
-
-		Map<String, Object> paraMap = new HashMap<String, Object>(8);
-		paraMap.put("appId", 1);
-		paraMap.put("requestId", String.valueOf(System.currentTimeMillis()));
-		paraMap.put("tpl", "");
-		paraMap.put("nounce", null);
-		paraMap.put("timeStamp", null);
-		paraMap.put("token", null);
-
-		JSONObject jsonResult = HttpUtil.doJsonPost(PetConstant.CAPTCHA_URL, JSONObject.toJSONString(paraMap).toString(), 1000, 1000);
-
-		try {
-			if (jsonResult == null) {
-				return null;
-			}
-			String imgData = jsonResult.getJSONObject("data").get("img").toString();
-			String seed = jsonResult.getJSONObject("data").get("seed").toString();
-			InputStream is = new ByteArrayInputStream(Base64.getDecoder().decode(imgData));
-			BufferedImage image = ImageIO.read(is);
-
-			// String vCode = OcrUtil.ocrByTesseract(image);
-			String vCode = OcrUtil.ocrByTess4j(image);
-			System.out.println("验证码：" + vCode);
-			if (StringUtils.isNotEmpty(vCode) && vCode.length() > 4) {
-				vCode = vCode.substring(vCode.length() - 4);
-			}
-			if (StringUtils.isNotEmpty(vCode) && vCode.length() == 3) {
-				vCode = "G" + vCode;
-			}
-
-			if (StringUtils.isNotEmpty(vCode) && vCode.length() == 4) {
-				Map<String, String> vCodeMap = new HashMap<String, String>(4);
-				vCodeMap.put("seed", seed);
-				vCodeMap.put("vCode", vCode);
-				return vCodeMap;
-			} else {
-				logger.info("ocr captcha error [{}]", vCode);
-			}
-			is.close();
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		} finally {
-		}
-		return null;
-	}
+	// private Map<String, String> getCaptcha() {
+	//
+	// Map<String, Object> paraMap = new HashMap<String, Object>(8);
+	// paraMap.put("appId", 1);
+	// paraMap.put("requestId", String.valueOf(System.currentTimeMillis()));
+	// paraMap.put("tpl", "");
+	// paraMap.put("nounce", null);
+	// paraMap.put("timeStamp", null);
+	// paraMap.put("token", null);
+	//
+	// JSONObject jsonResult = HttpUtil.doJsonPost(PetConstant.CAPTCHA_URL, JSONObject.toJSONString(paraMap).toString(), 1000, 1000);
+	//
+	// try {
+	// if (jsonResult == null) {
+	// return null;
+	// }
+	// String imgData = jsonResult.getJSONObject("data").get("img").toString();
+	// String seed = jsonResult.getJSONObject("data").get("seed").toString();
+	// InputStream is = new ByteArrayInputStream(Base64.getDecoder().decode(imgData));
+	// BufferedImage image = ImageIO.read(is);
+	//
+	// // String vCode = OcrUtil.ocrByTesseract(image);
+	// String vCode = OcrUtil.ocrByTess4j(image);
+	// System.out.println("验证码：" + vCode);
+	// if (StringUtils.isNotEmpty(vCode) && vCode.length() > 4) {
+	// vCode = vCode.substring(vCode.length() - 4);
+	// }
+	// if (StringUtils.isNotEmpty(vCode) && vCode.length() == 3) {
+	// vCode = "G" + vCode;
+	// }
+	//
+	// if (StringUtils.isNotEmpty(vCode) && vCode.length() == 4) {
+	// Map<String, String> vCodeMap = new HashMap<String, String>(4);
+	// vCodeMap.put("seed", seed);
+	// vCodeMap.put("vCode", vCode);
+	// return vCodeMap;
+	// } else {
+	// logger.info("ocr captcha error [{}]", vCode);
+	// }
+	// is.close();
+	// } catch (Exception e) {
+	// logger.error(e.getMessage());
+	// } finally {
+	// }
+	// return null;
+	// }
 
 }
