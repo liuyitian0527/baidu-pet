@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+
+	<property scope="context" name="AppName" value="petchain" />
+	<property scope="context" name="ServerName" value="petchain" />
+
+	<!-- Print log in console for local testing -->
+	<appender name="rollingFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>./log/${ServerName}/${AppName}.log.%d{yyyy-MM-dd}.txt
+			</fileNamePattern>
+			<maxHistory>365</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d|%.-4096msg%n</pattern>
+		</encoder>
+	</appender>
+	<root level="INFO">
+		<appender-ref ref="rollingFile" />
+	</root>
+
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d|%.-4096msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<root level="INFO">
+		<appender-ref ref="console" />
+	</root>
+	
+    <logger name="org.apache.http.*" level="ERROR" />	
+    <logger name="o.a.h.i.c.*" level="ERROR" />	
+</configuration>
