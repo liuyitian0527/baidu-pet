@@ -3,8 +3,6 @@ package com.fun.zpetchain;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fun.zpetchain.constant.PetConstant;
@@ -12,10 +10,22 @@ import com.fun.zpetchain.model.Pet;
 import com.fun.zpetchain.model.User;
 import com.fun.zpetchain.util.HttpUtil;
 
+/**
+ * 
+ * Title.用户宠物中心 <br>
+ * Description.
+ * <p>
+ * Copyright: Copyright (c) 2018-3-31 下午7:58:02
+ * <p>
+ * Author: liuyt
+ * <p>
+ * Version: 1.0
+ * <p>
+ */
 public class PetCenter {
 
 	/**
-	 * 我的cw列表
+	 * 我的宠物列表
 	 */
 	public static List<Pet> getMyPetList(User user) {
 		List<Pet> pets = new ArrayList<Pet>();

@@ -10,6 +10,18 @@ import com.fun.zpetchain.model.User;
 import com.fun.zpetchain.util.FileUtil;
 import com.fun.zpetchain.util.PropUtil;
 
+/**
+ * 
+ * Title. pet基础常量类<br>
+ * Description.
+ * <p>
+ * Copyright: Copyright (c) 2018-3-31 下午9:41:49
+ * <p>
+ * Author: liuyt
+ * <p>
+ * Version: 1.0
+ * <p>
+ */
 public class PetConstant {
 	/**
 	 * 接口成功标识
@@ -97,6 +109,11 @@ public class PetConstant {
 	 */
 	public final static Integer ANGEL_RAISE = 11000;
 
+	/**
+	 * 超级稀有加价
+	 */
+	public final static Integer SUPER_RARE_RAISE = 2000;
+
 	public final static LinkedHashMap<String, Integer> SALE_AMOUNT = new LinkedHashMap<String, Integer>();
 
 	static {
@@ -125,17 +142,20 @@ public class PetConstant {
 		SALE_AMOUNT.put("史诗_2_24小时_5稀", 15000);
 		SALE_AMOUNT.put("史诗_2_2天_5稀", 14000);
 		SALE_AMOUNT.put("史诗_2_4天_5稀", 13000);
-		
+
 		SALE_AMOUNT.put("史诗_3_0分钟_4稀", 6400);
 		SALE_AMOUNT.put("史诗_3_0分钟_5稀", 15000);
 	}
 
 	/********************************************* 售价配置 结束 **************************************************************/
 
+	public static final String SUCCESS_BUY_PATH_STRING = null;
+
 	/**
 	 * 用户信息
 	 */
 	public static List<User> USERS = new ArrayList<User>();
+
 	static {
 		try {
 			String jsonString = FileUtil.readTxt(PropUtil.getProp("cookie_path"));

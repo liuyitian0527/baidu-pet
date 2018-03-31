@@ -9,9 +9,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
 
-import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.lang.StringUtils;
@@ -26,6 +27,15 @@ import com.fun.zpetchain.util.OcrUtil;
 
 public class VerCodeTask {
 	private static Logger logger = Logger.getLogger(VerCodeTask.class);
+
+	public static void main(String[] args) {
+		Timer timer = new Timer();
+		timer.scheduleAtFixedRate(new TimerTask() {
+			public void run() {
+				System.out.println("-------设定要指定任务--------");
+			}
+		}, 1000, 2000);
+	}
 
 	public static Map<User, Queue<VerCode>> queueMap = new LinkedHashMap<User, Queue<VerCode>>();
 
@@ -79,7 +89,7 @@ public class VerCodeTask {
 			Queue<VerCode> queue = queueMap.get(user);
 			while (!queue.isEmpty()) {
 				if (System.currentTimeMillis() - queue.peek().getCreateTime() > PetConstant.VALID_TIME) {
-					logger.info(user.getName() + " 验证码清理");
+					logger.info(user.getName() + " 验证码过期清理成功");
 					queue.poll();
 				} else {
 					break;

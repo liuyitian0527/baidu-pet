@@ -9,7 +9,6 @@ import com.fun.zpetchain.constant.PetConstant;
 import com.fun.zpetchain.model.Pet;
 import com.fun.zpetchain.model.User;
 import com.fun.zpetchain.util.HttpUtil;
-import com.sun.javafx.tk.Toolkit.Task;
 
 public class PetSale {
 
@@ -75,35 +74,45 @@ public class PetSale {
 	}
 
 	public static void salePet(Pet pet, User user) {
-		String amount = getSalePetAmount(pet);
-		if (StringUtils.isNotBlank(amount)) {
-			String params = getSalePetParams(pet, amount);
-			// 接口调用
-			JSONObject result = HttpUtil.post(PetConstant.SALE_PET, params, user);
-			if (PetConstant.SUCCESS.equals(result.getString("errorNo"))) {
-				System.out.println("上架成功");
-			} else {
-				System.out.println("上架失败：" + result);
+		try {
+			String amount = getSalePetAmount(pet);
+			if (StringUtils.isNotBlank(amount)) {
+				String params = getSalePetParams(pet, amount);
+				// 接口调用
+				JSONObject result = HttpUtil.post(PetConstant.SALE_PET, params, user);
+				if (PetConstant.SUCCESS.equals(result.getString("errorNo"))) {
+					System.out.println("上架成功");
+				} else {
+					System.out.println("上架失败：" + result);
+				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+
 	}
 
 	public static void cancleSalePet(Pet pet, User user) {
-		if ("1".equals(pet.getShelfStatus())) {
-			String params = getCancleSalePetParams(pet);
-			// 接口调用
-			JSONObject result = HttpUtil.post(PetConstant.CANCEL_SALE_PET, params, user);
-			if (result != null && PetConstant.SUCCESS.equals(result.getString("errorNo"))) {
-				System.out.println("下架成功：" + pet);
-				pet.setShelfStatus("0");
-				try {
-					// 线程休息500毫秒
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+		try {
+			if ("1".equals(pet.getShelfStatus())) {
+				String params = getCancleSalePetParams(pet);
+				// 接口调用
+				JSONObject result = HttpUtil.post(PetConstant.CANCEL_SALE_PET, params, user);
+				if (result != null && PetConstant.SUCCESS.equals(result.getString("errorNo"))) {
+					System.out.println("下架成功：" + pet);
+					pet.setShelfStatus("0");
+					try {
+						// 线程休息500毫秒
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+
 	}
 
 	private static String getCancleSalePetParams(Pet pet) {
