@@ -9,6 +9,7 @@ import com.fun.zpetchain.constant.PetConstant;
 import com.fun.zpetchain.model.Pet;
 import com.fun.zpetchain.model.User;
 import com.fun.zpetchain.util.HttpUtil;
+import com.sun.javafx.tk.Toolkit.Task;
 
 public class PetSale {
 
@@ -17,11 +18,51 @@ public class PetSale {
 		for (User user : PetConstant.USERS) {
 			List<Pet> pets = PetCenter.getMyPetList(user);
 			for (Pet pet : pets) {
-				salePet(pet, user); // 上架
-				// cancleSalePet(pet,user); // 下架
+				cancleSalePet(pet, user); // 下架
 			}
-			System.out.println(user.getName() + "............................上下架结束！");
+			System.out.println(user.getName() + "............................下架结束！");
 		}
+
+		for (User user : PetConstant.USERS) {
+			List<Pet> pets = PetCenter.getMyPetList(user);
+			for (Pet pet : pets) {
+				salePet(pet, user); // 上架
+			}
+			System.out.println(user.getName() + "............................上架结束！");
+		}
+	}
+
+	public static void saleTask() {
+		// 每隔10分钟自动上架
+		final long timeInterval = 1000 * 60 * 10;
+		Runnable runnable = new Runnable() {
+			public void run() {
+				while (true) {
+					for (User user : PetConstant.USERS) {
+						List<Pet> pets = PetCenter.getMyPetList(user);
+						for (Pet pet : pets) {
+							cancleSalePet(pet, user); // 下架
+						}
+						System.out.println(user.getName() + "............................下架结束！");
+					}
+
+					for (User user : PetConstant.USERS) {
+						List<Pet> pets = PetCenter.getMyPetList(user);
+						for (Pet pet : pets) {
+							salePet(pet, user); // 上架
+						}
+						System.out.println(user.getName() + "............................上架结束！");
+					}
+					try {
+						Thread.sleep(timeInterval);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		};
+		Thread thread = new Thread(runnable);
+		thread.start();
 	}
 
 	public static User getUser(String name) {
@@ -54,6 +95,7 @@ public class PetSale {
 			JSONObject result = HttpUtil.post(PetConstant.CANCEL_SALE_PET, params, user);
 			if (result != null && PetConstant.SUCCESS.equals(result.getString("errorNo"))) {
 				System.out.println("下架成功：" + pet);
+				pet.setShelfStatus("0");
 				try {
 					// 线程休息500毫秒
 					Thread.sleep(500);
@@ -102,25 +144,20 @@ public class PetSale {
 		if (pet.getRareNum() == 0) {
 			System.out.println("0稀有...跳过出售！");
 			return "";
-		} else if (pet.getRareNum() > 4) {
-			System.out.println("超级稀有." + pet.getRareNum() + "..跳过出售！");
-			return "";
 		}
 
-		if (pet.getIsAngell()) {
-			System.out.println("天使宠物...跳过出售！" + pet);
-			return "";
-		}
+		String k = pet.getRareDegree() + "_" + pet.getGeneration() + "_" + pet.getCoolingInterval() + "_" + pet.getRareNum() + "稀";
+		Integer amount = PetConstant.SALE_AMOUNT.get(k);
 
-		String rareDegree = pet.getRareDegree();
-		int rareNum = pet.getRareNum();
-		if (rareDegree.equals("史诗") && rareNum <= 4) {
-			String k = pet.getRareDegree() + "_" + pet.getGeneration() + "_" + pet.getCoolingInterval();
-			Integer amount = PetConstant.SALE_AMOUNT.get(k);
-			if (amount != null) {
-				System.out.println(k + "  售价：" + amount);
+		if (amount != null) {
+			if (pet.getIsAngell()) {
+				amount = amount + PetConstant.ANGEL_RAISE;
+				System.out.println(k + "_" + "........天使宠物...售价" + amount);
 				return amount.toString();
 			}
+
+			System.out.println(k + "  售价：" + amount);
+			return amount.toString();
 		}
 
 		return "";

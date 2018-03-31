@@ -48,6 +48,7 @@ public class PetBuy {
 		try {
 			petChain.initProp();
 			VerCodeTask.init();
+			PetSale.saleTask();
 		} catch (Exception e) {
 			logger.error("load properties fail, stop...");
 		}
@@ -108,10 +109,11 @@ public class PetBuy {
 
 		if (jsonResult != null && "success".equals(jsonResult.get("errorMsg"))) {
 			List<Pet> petArr = JSONArray.parseArray(jsonResult.getJSONObject("data").getJSONArray("petsOnSale").toString(), Pet.class);
-			int trycount = 1;
+
 			// 找出命中售价的宠物
 			Pet pet = choosePetFromPetArr(petArr, sortType, user);
 			if (pet != null) {
+				int trycount = 1;
 				logger.info(user.getName() + " 尝试购买 售价:{}, 等级:{}, 休息:{}, petId:{}", pet.getAmount(), pet.getRareDegree(), pet.getCoolingInterval(),
 						pet.getPetId());
 				while (trycount <= PetConstant.TYR_COUNT) {
@@ -166,8 +168,8 @@ public class PetBuy {
 		for (String degree : Pet.levelValueMap.keySet()) {
 			Pet petPrt = lowestPetMap.get(degree);
 			if (petPrt != null) {
-				System.out.println(String.format(user.getName() + "  %s: 售价:%s, 等级:%s, 休息:%s, petId:%s", sortType, petPrt.getAmount(),
-						petPrt.getRareDegree(), petPrt.getCoolingInterval(), petPrt.getPetId()));
+				System.out.println(String.format(user.getName() + "  %s: 售价:%s, 等级:%s %s, 休息:%s, petId:%s", sortType, petPrt.getAmount(),
+						petPrt.getRareDegree(), petPrt.getGeneration() + "代", petPrt.getCoolingInterval(), petPrt.getPetId()));
 			}
 		}
 
@@ -217,8 +219,9 @@ public class PetBuy {
 				String errorMsg = jsonResult.getString("errorMsg");
 				String errorNo = jsonResult.getString("errorNo");
 				if (errorNo.equals("00")) {
-					String str = String.format(user.getName() + " 购买成功！交易时间：%s, petId:%s, 售价：%s, 等级:%s, 休息时间：%s ", TimeUtil.now(TimeUtil.TARGET_1),
-							pet.getId(), pet.getAmount(), pet.getRareDegree(), pet.getCoolingInterval());
+					String str = String.format(user.getName() + " 购买成功！交易时间：%s, petId:%s, 售价：%s, 等级:%s %s, 休息时间：%s ",
+							TimeUtil.now(TimeUtil.TARGET_1), pet.getId(), pet.getAmount(), pet.getRareDegree(), pet.getGeneration() + "代",
+							pet.getCoolingInterval());
 					FileUtil.appendTxt(str + "\n", "E:\\购买记录.txt");
 					System.out.println(str);
 					Thread.sleep(1000 * 60 * 3);

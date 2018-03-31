@@ -92,24 +92,42 @@ public class PetConstant {
 	/************************* url 结束********************************** ****************************************************/
 
 	/********************************************* 售价配置 开始 **************************************************************/
+	/**
+	 * 天使加价金额
+	 */
+	public final static Integer ANGEL_RAISE = 11000;
+
 	public final static LinkedHashMap<String, Integer> SALE_AMOUNT = new LinkedHashMap<String, Integer>();
 
 	static {
-		// key = 史诗_1代_2天
-		SALE_AMOUNT.put("史诗_0_0分钟", 8000);
-		SALE_AMOUNT.put("史诗_0_24小时", 7600);
-		SALE_AMOUNT.put("史诗_0_2天", 7300);
-		SALE_AMOUNT.put("史诗_0_4天", 6800);
+		// key = 史诗_1代_2天_4稀
+		SALE_AMOUNT.put("史诗_0_0分钟_4稀", 7500);
+		SALE_AMOUNT.put("史诗_0_24小时_4稀", 6700);
+		SALE_AMOUNT.put("史诗_0_2天_4稀", 6500);
+		SALE_AMOUNT.put("史诗_0_4天_4稀", 6200);
 
-		SALE_AMOUNT.put("史诗_1_0分钟", 7400);
-		SALE_AMOUNT.put("史诗_1_24小时", 6800);
-		SALE_AMOUNT.put("史诗_1_2天", 6400);
-		SALE_AMOUNT.put("史诗_1_4天", 5800);
+		SALE_AMOUNT.put("史诗_1_0分钟_4稀", 6200);
+		SALE_AMOUNT.put("史诗_1_24小时_4稀", 5600);
+		SALE_AMOUNT.put("史诗_1_2天_4稀", 5400);
+		SALE_AMOUNT.put("史诗_1_4天_4稀", 5300);
 
-		SALE_AMOUNT.put("史诗_2_0分钟", 7200);
-		SALE_AMOUNT.put("史诗_2_24小时", 6500);
-		SALE_AMOUNT.put("史诗_2_2天", 5999);
-		SALE_AMOUNT.put("史诗_2_4天", 5888);
+		SALE_AMOUNT.put("史诗_2_0分钟_4稀", 6400);
+		SALE_AMOUNT.put("史诗_2_24小时_4稀", 5888);
+		SALE_AMOUNT.put("史诗_2_2天_4稀", 5666);
+		SALE_AMOUNT.put("史诗_2_4天_4稀", 5444);
+
+		SALE_AMOUNT.put("史诗_1_0分钟_5稀", 18000);
+		SALE_AMOUNT.put("史诗_1_24小时_5稀", 17000);
+		SALE_AMOUNT.put("史诗_1_2天_5稀", 16000);
+		SALE_AMOUNT.put("史诗_1_4天_5稀", 15000);
+
+		SALE_AMOUNT.put("史诗_2_0分钟_5稀", 16000);
+		SALE_AMOUNT.put("史诗_2_24小时_5稀", 15000);
+		SALE_AMOUNT.put("史诗_2_2天_5稀", 14000);
+		SALE_AMOUNT.put("史诗_2_4天_5稀", 13000);
+		
+		SALE_AMOUNT.put("史诗_3_0分钟_4稀", 6400);
+		SALE_AMOUNT.put("史诗_3_0分钟_5稀", 15000);
 	}
 
 	/********************************************* 售价配置 结束 **************************************************************/
