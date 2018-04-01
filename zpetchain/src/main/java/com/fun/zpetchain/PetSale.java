@@ -1,6 +1,8 @@
 package com.fun.zpetchain;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,55 +15,35 @@ import com.fun.zpetchain.util.HttpUtil;
 public class PetSale {
 
 	public static void main(String[] args) {
-
-		for (User user : PetConstant.USERS) {
-			List<Pet> pets = PetCenter.getMyPetList(user);
-			for (Pet pet : pets) {
-				cancleSalePet(pet, user); // 下架
-			}
-			System.out.println(user.getName() + "............................下架结束！");
-		}
-
-		for (User user : PetConstant.USERS) {
-			List<Pet> pets = PetCenter.getMyPetList(user);
-			for (Pet pet : pets) {
-				salePet(pet, user); // 上架
-			}
-			System.out.println(user.getName() + "............................上架结束！");
-		}
+		saleTask(0, 10000);
 	}
 
-	public static void saleTask() {
-		// 每隔10分钟自动上架
-		final long timeInterval = 1000 * 60 * 10;
-		Runnable runnable = new Runnable() {
+	public static void saleTask(long delay, long period) {
+		Timer timer = new Timer();
+		TimerTask task = new TimerTask() {
+			@Override
 			public void run() {
-				while (true) {
-					for (User user : PetConstant.USERS) {
-						List<Pet> pets = PetCenter.getMyPetList(user);
-						for (Pet pet : pets) {
-							cancleSalePet(pet, user); // 下架
-						}
-						System.out.println(user.getName() + "............................下架结束！");
-					}
 
-					for (User user : PetConstant.USERS) {
-						List<Pet> pets = PetCenter.getMyPetList(user);
-						for (Pet pet : pets) {
-							salePet(pet, user); // 上架
-						}
-						System.out.println(user.getName() + "............................上架结束！");
+				for (User user : PetConstant.USERS) {
+					List<Pet> pets = PetCenter.getMyPetList(user);
+					for (Pet pet : pets) {
+						cancleSalePet(pet, user); // 下架
 					}
-					try {
-						Thread.sleep(timeInterval);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+					System.out.println(user.getName() + "............................下架结束！");
 				}
+
+				for (User user : PetConstant.USERS) {
+					List<Pet> pets = PetCenter.getMyPetList(user);
+					for (Pet pet : pets) {
+						salePet(pet, user); // 上架
+					}
+					System.out.println(user.getName() + "............................上架结束！");
+				}
+
 			}
 		};
-		Thread thread = new Thread(runnable);
-		thread.start();
+
+		timer.scheduleAtFixedRate(task, 1000 * 60 * 3, 1000 * 60 * 10);
 	}
 
 	public static User getUser(String name) {

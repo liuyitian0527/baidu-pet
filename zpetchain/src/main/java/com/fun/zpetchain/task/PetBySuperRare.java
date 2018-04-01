@@ -26,7 +26,7 @@ import com.fun.zpetchain.util.TimeUtil;
  */
 public class PetBySuperRare {
 
-	private static Lock lock = new ReentrantLock();
+	private static final Lock lock = new ReentrantLock();
 
 	/**
 	 * 超级稀有购买，自动加价<br>
@@ -43,39 +43,51 @@ public class PetBySuperRare {
 					@Override
 					public void run() {
 						for (Pet pet : pets) {
+							Integer superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree()) + PetConstant.SUPER_RARE_RAISE;
+							if (pet.getAmount() > superAmount) {
+								continue;
+							}
+
 							Pet pInfo = PetCenter.getPetById(pet.getPetId(), user);
 							if (pInfo == null) {
 								continue;
 							}
 
 							if (pInfo.getRareNum() > 4 && pInfo.getRareNum() % 2 == 1) {
-								Integer superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + PetConstant.SUPER_RARE_RAISE;
 
-								if (pet != null && pet.getAmount() <= superAmount) {
-									System.out.println("尝试购买超级稀有: " + pInfo);
-									Boolean b = PetBuy.tryBuy(pInfo, user);
+								System.out.println("尝试购买超级稀有: " + pInfo);
+								FileUtil.appendTxt("尝试购买超级稀有: " + pInfo, PropUtil.getProp("success_buy_path"));
 
-									if (b) {
-										String str = String.format(user.getName() + " 超级稀有购买成功！交易时间：%s, petId:%s, 售价：%s, 等级:%s %s %s, 休息时间：%s ",
-												TimeUtil.now(TimeUtil.TARGET_1), pet.getId(), pet.getAmount(), pet.getRareDegree(),
-												pet.getGeneration() + "代", pInfo.getRareNum() + "稀", pet.getCoolingInterval());
-
+								int trycount = 1;
+								while (trycount <= 20) {
+									trycount++;
+									if (PetBuy.tryBuy(pet, user)) {
+										FileUtil.appendTxt("【超级稀有】购买成功: " + pInfo, PropUtil.getProp("success_buy_path"));
+										// 线程休息3分钟，等待宠物上链
 										try {
-											FileUtil.appendTxt(str + "\n", PropUtil.getProp("success_buy_path"));
-										} catch (Exception e) {
+											Thread.sleep(1000 * 60 * 3);
+										} catch (InterruptedException e) {
 											e.printStackTrace();
 										}
-
+										break;
+									} else {
+										try {
+											Thread.sleep(100);
+										} catch (InterruptedException e) {
+										}
+										continue;
 									}
 								}
+
 							}
 						}
+
 					}
 				};
-
 				Thread thread = new Thread(runnable);
 				thread.start();
 			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

@@ -30,8 +30,12 @@ public class FileUtil {
 	 *            文件名
 	 * @throws Exception
 	 */
-	public static void appendTxt(String str, String fileName) throws Exception {
-		write(str, fileName, true);
+	public static void appendTxt(String str, String fileName)  {
+		try {
+			write(str, fileName, true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
