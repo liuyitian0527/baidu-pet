@@ -89,7 +89,7 @@ public class VerCodeTask {
 			Queue<VerCode> queue = queueMap.get(user);
 			while (!queue.isEmpty()) {
 				if (System.currentTimeMillis() - queue.peek().getCreateTime() > PetConstant.VALID_TIME) {
-					logger.info(user.getName() + " 验证码过期清理成功");
+					// logger.info(user.getName() + " 验证码过期清理成功");
 					queue.poll();
 				} else {
 					break;
@@ -123,7 +123,7 @@ public class VerCodeTask {
 			vCode = getVerCode(user);
 			if (vCode != null) {
 				queueMap.get(user).offer(vCode);
-				logger.info("储备验证码成功，user:{" + user.getName() + "} code:{" + vCode.getvCode() + "}");
+				// logger.info("储备验证码成功，user:{" + user.getName() + "} code:{" + vCode.getvCode() + "}");
 			}
 		} catch (Throwable e) {
 			logger.error("请求验证码失败", e);

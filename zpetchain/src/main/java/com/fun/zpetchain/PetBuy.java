@@ -66,7 +66,7 @@ public class PetBuy {
 				}
 			};
 
-			timer.scheduleAtFixedRate(task, 1000 * 60 * 10, 1000 * 60 * 60 * 30);
+			timer.scheduleAtFixedRate(task, 1000 * 60 * 10, 1000 * 60 * 10);
 		} catch (Exception e) {
 			logger.error("init fail. " + e.getMessage());
 		}
@@ -76,9 +76,11 @@ public class PetBuy {
 				public void run() {
 					while (true) {
 						try {
-							PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_TIME, PetConstant.FILTER_COND_EPIC, user);
+							PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_AMT, PetConstant.FILTER_COND_EPIC, user);
+							// PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_TIME, PetConstant.FILTER_COND_EPIC, user);
 							Thread.sleep(200);
 						} catch (Exception e) {
+							e.printStackTrace();
 							logger.warn("exception:" + e.getMessage());
 						}
 					}
@@ -130,12 +132,15 @@ public class PetBuy {
 			List<Pet> petArr = JSONArray.parseArray(jsonResult.getJSONObject("data").getJSONArray("petsOnSale").toString(), Pet.class);
 
 			// 超级稀有购买
-			PetBySuperRare.tryBuySuperRare(petArr, user);
+			try {
+				PetBySuperRare.tryBuySuperRare(petArr, user);
+			} catch (Exception e) {
+			}
 
 			// 找出命中售价的宠物
 			Pet pet = choosePetFromPetArr(petArr, sortType, user);
 
-			if (pet != null) {
+			if (pet != null && !petCache.contains(pet.getPetId())) {
 				int trycount = 1;
 				logger.info(user.getName() + " 尝试购买 售价:{}, 等级:{}, 休息:{}, petId:{}", pet.getAmount(), pet.getRareDegree(), pet.getCoolingInterval(),
 						pet.getPetId());
@@ -171,32 +176,32 @@ public class PetBuy {
 		// 每代里面价格最低的宠物
 		Map<String, Pet> lowestPetMap = new HashMap<String, Pet>(16);
 		for (Pet pet : petArr) {
-			// 休息时间大于4天的，直接跳过
+			// 休息时间大于2天的，直接跳过
 			String coolingInterval = pet.getCoolingInterval();
-			if (coolingInterval.indexOf("天") > -1 && Integer.parseInt(coolingInterval.charAt(0) + "") >= 4) {
+			if (coolingInterval.indexOf("天") > -1 && Integer.parseInt(coolingInterval.charAt(0) + "") >= 2) {
 				continue;
 			}
 
-			// 不考虑代数
-			if (pet.getGeneration() >= 0) {
+			// 只买0代
+			if (pet.getGeneration() == 0) {
 				Pet itemPet = lowestPetMap.get(pet.getRareDegree());
 				if (itemPet == null) {
 					lowestPetMap.put(pet.getRareDegree(), pet);
 				} else {
 					if (pet.getAmount() < itemPet.getAmount()) {
-						lowestPetMap.put(pet.getRareDegree(), itemPet);
+						lowestPetMap.put(pet.getRareDegree(), pet);
 					}
 				}
 			}
 		}
 
-		// for (String degree : Pet.levelValueMap.keySet()) {
-		// Pet petPrt = lowestPetMap.get(degree);
-		// if (petPrt != null) {
-		// System.out.println(String.format(user.getName() + "  %s: 售价:%s, 等级:%s %s, 休息:%s, petId:%s", sortType, petPrt.getAmount(),
-		// petPrt.getRareDegree(), petPrt.getGeneration() + "代", petPrt.getCoolingInterval(), petPrt.getPetId()));
-		// }
-		// }
+		for (String degree : Pet.levelValueMap.keySet()) {
+			Pet petPrt = lowestPetMap.get(degree);
+			if (petPrt != null) {
+				System.out.println(String.format(user.getName() + "  %s: 售价:%s, 等级:%s %s, 休息:%s, petId:%s", sortType, petPrt.getAmount(),
+						petPrt.getRareDegree(), petPrt.getGeneration() + "代", petPrt.getCoolingInterval(), petPrt.getPetId()));
+			}
+		}
 
 		Pet pet = null;
 		for (String degree : Pet.levelValueMap.keySet()) {
@@ -218,7 +223,7 @@ public class PetBuy {
 	 */
 	public static boolean tryBuy(Pet pet, User user) {
 		VerCode verCode = VerCodeTask.getVerCodeInfo(user);
-		if (verCode == null || petCache.contains(pet.getPetId())) {
+		if (verCode == null) {
 			return false;
 		}
 		Map<String, Object> paraMap = new HashMap<String, Object>(16);
