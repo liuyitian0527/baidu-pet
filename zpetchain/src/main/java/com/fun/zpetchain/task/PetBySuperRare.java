@@ -55,14 +55,11 @@ public class PetBySuperRare {
 
 							if (pInfo.getRareNum() > 4 && pInfo.getRareNum() % 2 == 1) {
 
-								System.out.println("尝试购买超级稀有: " + pInfo);
-								FileUtil.appendTxt("尝试购买超级稀有: " + pInfo, PropUtil.getProp("success_buy_path"));
-
 								int trycount = 1;
 								while (trycount <= 20) {
 									trycount++;
 									if (PetBuy.tryBuy(pet, user)) {
-										FileUtil.appendTxt("【超级稀有】购买成功: " + pInfo, PropUtil.getProp("success_buy_path"));
+										FileUtil.appendTxt(user.getName() + " 【超级稀有】购买成功: " + pInfo, PropUtil.getProp("success_buy_path"));
 										// 线程休息3分钟，等待宠物上链
 										try {
 											Thread.sleep(1000 * 60 * 3);

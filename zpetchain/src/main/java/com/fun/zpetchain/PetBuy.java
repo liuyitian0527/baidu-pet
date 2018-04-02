@@ -56,7 +56,7 @@ public class PetBuy {
 			// 验证码初始化
 			VerCodeTask.init();
 			// 10分后自动上下架
-			PetSale.saleTask(1000 * 60 * 3, 1000 * 60 * 10);
+			PetSale.saleTask(1000 * 60 * 3, 1000 * 60 * 20);
 		} catch (Exception e) {
 			logger.error("init fail. " + e.getMessage());
 		}
@@ -67,8 +67,11 @@ public class PetBuy {
 				@Override
 				public void run() {
 					try {
-						PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_AMT, PetConstant.FILTER_COND_EPIC, user);
-						// PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_TIME, PetConstant.FILTER_COND_EPIC, user);
+						if (user.getName().equalsIgnoreCase("zhangyu")) {
+							PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_AMT, PetConstant.FILTER_COND_EPIC, user);
+						} else {
+							PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_TIME, PetConstant.FILTER_COND_EPIC, user);
+						}
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -168,9 +171,12 @@ public class PetBuy {
 		for (Pet pet : petArr) {
 			// 休息时间大于2天的，直接跳过
 			String coolingInterval = pet.getCoolingInterval();
-			if (coolingInterval.indexOf("天") > -1 && Integer.parseInt(coolingInterval.charAt(0) + "") >= 2) {
+			if (!coolingInterval.equals("0分钟")) {
 				continue;
 			}
+			/*
+			 * if (coolingInterval.indexOf("天") > -1 && Integer.parseInt(coolingInterval.charAt(0) + "") >= 2) { continue; }
+			 */
 
 			// 只买0代
 			if (pet.getGeneration() == 0) {
