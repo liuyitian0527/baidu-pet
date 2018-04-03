@@ -118,9 +118,9 @@ public class PetConstant {
 
 	static {
 		// key = 史诗_1代_2天_4稀
-		SALE_AMOUNT.put("史诗_0_0分钟_4稀", 7400);
-		SALE_AMOUNT.put("史诗_0_24小时_4稀", 6800);
-		SALE_AMOUNT.put("史诗_0_2天_4稀", 6500);
+		SALE_AMOUNT.put("史诗_0_0分钟_4稀", 6800);
+		SALE_AMOUNT.put("史诗_0_24小时_4稀", 6500);
+		SALE_AMOUNT.put("史诗_0_2天_4稀", 6200);
 		SALE_AMOUNT.put("史诗_0_4天_4稀", 5500);
 
 		SALE_AMOUNT.put("史诗_1_0分钟_4稀", 5500);

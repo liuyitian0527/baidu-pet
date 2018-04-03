@@ -78,7 +78,7 @@ public class PetBuy {
 				}
 
 			};
-			timer.scheduleAtFixedRate(task, 0, 100);
+			timer.scheduleAtFixedRate(task, 0, 200);
 		}
 	}
 
@@ -175,7 +175,9 @@ public class PetBuy {
 				continue;
 			}
 			/*
-			 * if (coolingInterval.indexOf("天") > -1 && Integer.parseInt(coolingInterval.charAt(0) + "") >= 2) { continue; }
+			 * if (coolingInterval.indexOf("天") > -1 &&
+			 * Integer.parseInt(coolingInterval.charAt(0) + "") >= 2)
+			 * { continue; }
 			 */
 
 			// 只买0代
