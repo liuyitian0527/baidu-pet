@@ -6,6 +6,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import com.fun.zpetchain.PetBuy;
 import com.fun.zpetchain.PetCenter;
+import com.fun.zpetchain.constant.PathConstant;
 import com.fun.zpetchain.constant.PetConstant;
 import com.fun.zpetchain.model.Pet;
 import com.fun.zpetchain.model.User;
@@ -53,13 +54,21 @@ public class PetBySuperRare {
 								continue;
 							}
 
+							String coolingInterval = pInfo.getCoolingInterval();
+							if (coolingInterval.indexOf("天") > -1 && Integer.parseInt(coolingInterval.charAt(0) + "") >= 4) {
+								superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree());
+								if (pInfo.getAmount() > superAmount) {
+									continue;
+								}
+							}
+
 							if (pInfo.getRareNum() > 4 && pInfo.getRareNum() % 2 == 1) {
 
 								int trycount = 1;
 								while (trycount <= 20) {
 									trycount++;
 									if (PetBuy.tryBuy(pet, user)) {
-										FileUtil.appendTxt(user.getName() + " 【超级稀有】购买成功: " + pInfo, PropUtil.getProp("success_buy_path"));
+										FileUtil.appendTxt(user.getName() + " 【超级稀有】购买成功: " + pInfo, PathConstant.BUY_PATH);
 										// 线程休息3分钟，等待宠物上链
 										try {
 											Thread.sleep(1000 * 60 * 3);

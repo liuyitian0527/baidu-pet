@@ -27,7 +27,7 @@ public class PetCenter {
 	/**
 	 * 我的宠物列表
 	 */
-	public static List<Pet> getMyPetList(User user) {
+	public static List<Pet> getMyPetList(User user, Boolean isFindAttr) {
 		List<Pet> pets = new ArrayList<Pet>();
 		int pageNo = 1, totalCount = 0;
 
@@ -59,6 +59,7 @@ public class PetCenter {
 
 				} else {
 					System.out.println(user.getName() + " 宠物列表获取失败，返回：" + obj);
+					break;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -67,6 +68,10 @@ public class PetCenter {
 		}
 
 		System.out.println(user.getName() + " 一共查询到" + totalCount + "只宠物！");
+
+		if (!isFindAttr) {
+			return pets;
+		}
 
 		System.out.println(user.getName() + " 稀有属性数量查询...开始...");
 		List<Pet> rePets = new ArrayList<Pet>();

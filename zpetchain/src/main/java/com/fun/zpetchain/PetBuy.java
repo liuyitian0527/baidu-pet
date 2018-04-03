@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.fun.zpetchain.constant.PathConstant;
 import com.fun.zpetchain.constant.PetConstant;
 import com.fun.zpetchain.enums.PetEnum;
 import com.fun.zpetchain.model.Pet;
@@ -250,7 +251,7 @@ public class PetBuy {
 							TimeUtil.now(TimeUtil.TARGET_1), pet.getId(), pet.getAmount(), pet.getRareDegree(), pet.getGeneration() + "代",
 							pet.getCoolingInterval());
 
-					FileUtil.appendTxt(str + "\n", PropUtil.getProp("success_buy_path"));
+					FileUtil.appendTxt(str + "\n", PathConstant.BUY_PATH);
 					System.out.println(str);
 
 					return true;
@@ -259,7 +260,7 @@ public class PetBuy {
 				}
 			}
 		} catch (Exception e) {
-			System.out.println(user.getName() + " purchase error:" + e.getMessage());
+			System.out.println(user.getName() + " 购买 error:" + e.getMessage());
 		}
 
 		return false;

@@ -99,7 +99,8 @@ public class PetConstant {
 
 	/** 获取宠物信息 */
 	public final static String GET_PET_BY_ID = "https://pet-chain.baidu.com/data/pet/queryPetById";
-	// public final static String GET_PET_BY_ID = "https://pet-chain.baidu.com/data/pet/queryPetByIdWithAuth";
+	// public final static String GET_PET_BY_ID =
+	// "https://pet-chain.baidu.com/data/pet/queryPetByIdWithAuth";
 
 	/************************* url 结束********************************** ****************************************************/
 

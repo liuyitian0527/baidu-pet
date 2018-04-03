@@ -25,7 +25,7 @@ public class PetSale {
 			public void run() {
 
 				for (User user : PetConstant.USERS) {
-					List<Pet> pets = PetCenter.getMyPetList(user);
+					List<Pet> pets = PetCenter.getMyPetList(user, false);
 					for (Pet pet : pets) {
 						cancleSalePet(pet, user); // 下架
 					}
@@ -33,7 +33,7 @@ public class PetSale {
 				}
 
 				for (User user : PetConstant.USERS) {
-					List<Pet> pets = PetCenter.getMyPetList(user);
+					List<Pet> pets = PetCenter.getMyPetList(user, true);
 					for (Pet pet : pets) {
 						salePet(pet, user); // 上架
 					}
