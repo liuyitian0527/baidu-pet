@@ -11,8 +11,6 @@ import com.fun.zpetchain.constant.PetConstant;
 import com.fun.zpetchain.model.Pet;
 import com.fun.zpetchain.model.User;
 import com.fun.zpetchain.util.FileUtil;
-import com.fun.zpetchain.util.PropUtil;
-import com.fun.zpetchain.util.TimeUtil;
 
 /**
  * Title. 超级稀有抓取<br>
@@ -54,6 +52,7 @@ public class PetBySuperRare {
 								continue;
 							}
 
+							// 大于4天，不考虑
 							String coolingInterval = pInfo.getCoolingInterval();
 							if (coolingInterval.indexOf("天") > -1 && Integer.parseInt(coolingInterval.charAt(0) + "") >= 4) {
 								superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree());
@@ -62,8 +61,8 @@ public class PetBySuperRare {
 								}
 							}
 
-							if (pInfo.getRareNum() > 4 && pInfo.getRareNum() % 2 == 1) {
-
+							// 超级稀有
+							if (pInfo.getRareNum() > 4) {
 								int trycount = 1;
 								while (trycount <= 20) {
 									trycount++;
@@ -84,8 +83,42 @@ public class PetBySuperRare {
 										continue;
 									}
 								}
-
 							}
+
+							// 天使、白眉
+							else {
+								if (pInfo.getIsAngell() || pInfo.getIsWhiteEyes()) {
+
+									if (coolingInterval.indexOf("天") > -1) {
+										continue;
+									}
+
+									superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree()) + 2000;
+									if (pInfo.getAmount() <= superAmount) {
+										int trycount = 1;
+										while (trycount <= 20) {
+											trycount++;
+											if (PetBuy.tryBuy(pet, user)) {
+												FileUtil.appendTxt(user.getName() + " 【天使|白眉】购买成功: " + pInfo, PathConstant.BUY_PATH);
+												// 线程休息3分钟，等待宠物上链
+												try {
+													Thread.sleep(1000 * 60 * 3);
+												} catch (InterruptedException e) {
+													e.printStackTrace();
+												}
+												break;
+											} else {
+												try {
+													Thread.sleep(100);
+												} catch (InterruptedException e) {
+												}
+												continue;
+											}
+										}
+									}
+								}
+							}
+
 						}
 
 					}

@@ -111,6 +111,11 @@ public class PetConstant {
 	public final static Integer ANGEL_RAISE = 11000;
 
 	/**
+	 * 白眉斗眼加价金额
+	 */
+	public final static Integer WHITE_EYES = 5000;
+
+	/**
 	 * 超级稀有买入加价
 	 */
 	public final static Integer SUPER_RARE_RAISE = 4000;
@@ -134,6 +139,11 @@ public class PetConstant {
 		SALE_AMOUNT.put("史诗_2_2天_4稀", 5666);
 		SALE_AMOUNT.put("史诗_2_4天_4稀", 5444);
 
+		SALE_AMOUNT.put("史诗_0_0分钟_5稀", 33000);
+		SALE_AMOUNT.put("史诗_0_24小时_5稀", 30000);
+		SALE_AMOUNT.put("史诗_0_2天_5稀", 27000);
+		SALE_AMOUNT.put("史诗_0_4天_5稀", 25000);
+
 		SALE_AMOUNT.put("史诗_1_0分钟_5稀", 22000);
 		SALE_AMOUNT.put("史诗_1_24小时_5稀", 20000);
 		SALE_AMOUNT.put("史诗_1_2天_5稀", 19000);
@@ -146,6 +156,7 @@ public class PetConstant {
 
 		SALE_AMOUNT.put("史诗_3_0分钟_4稀", 6400);
 		SALE_AMOUNT.put("史诗_3_0分钟_5稀", 22000);
+		SALE_AMOUNT.put("史诗_3_6天_5稀", 14000);
 	}
 
 	/********************************************* 售价配置 结束 **************************************************************/

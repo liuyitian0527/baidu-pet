@@ -1,5 +1,5 @@
 *.class
-
+/购买记录.txt
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 

@@ -11,6 +11,7 @@ import com.fun.zpetchain.constant.PetConstant;
 import com.fun.zpetchain.model.Pet;
 import com.fun.zpetchain.model.User;
 import com.fun.zpetchain.util.HttpUtil;
+import com.fun.zpetchain.util.TimeUtil;
 
 public class PetSale {
 
@@ -43,7 +44,7 @@ public class PetSale {
 			}
 		};
 
-		timer.scheduleAtFixedRate(task, 1000 * 60 * 3, 1000 * 60 * 10);
+		timer.scheduleAtFixedRate(task, delay, period);
 	}
 
 	public static User getUser(String name) {
@@ -144,7 +145,10 @@ public class PetSale {
 			if (pet.getIsAngell()) {
 				amount = amount + PetConstant.ANGEL_RAISE;
 				System.out.println(k + "_" + "........天使宠物...售价" + amount);
-				return amount.toString();
+			}
+			if (pet.getIsWhiteEyes()) {
+				amount = amount + PetConstant.WHITE_EYES;
+				System.out.println(k + "_" + "........白眉斗眼宠物...售价" + amount);
 			}
 
 			System.out.println(k + "  售价：" + amount);
