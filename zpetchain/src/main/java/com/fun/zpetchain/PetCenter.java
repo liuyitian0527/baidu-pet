@@ -3,6 +3,8 @@ package com.fun.zpetchain;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fun.zpetchain.constant.PetConstant;
@@ -103,6 +105,7 @@ public class PetCenter {
 			// 稀有属性数量赋值
 			int rareNum = 0;
 			JSONArray attrs = pJson.getJSONArray("attributes");
+			List<String> rareAttrs = new ArrayList<String>();
 			for (int i = 0; i < attrs.size(); i++) {
 				JSONObject atr = attrs.getJSONObject(i);
 				String name = atr.getString("name");
@@ -115,7 +118,7 @@ public class PetCenter {
 						pet.setIsAngell(false);
 					}
 				} else if (name.equals("眼睛")) {
-					if (value.equals("白眉斗眼")) {
+					if (value.equals("白眉斗眼") || value.equals("小对眼")) {
 						pet.setIsWhiteEyes(true);
 					} else {
 						pet.setIsWhiteEyes(false);
@@ -124,9 +127,11 @@ public class PetCenter {
 
 				if ("稀有".equals(atr.getString("rareDegree"))) {
 					rareNum++;
+					rareAttrs.add(name);
 				}
 			}
 
+			pet.setRareAttrs(StringUtils.join(rareAttrs, ","));
 			pet.setRareNum(rareNum);
 		}
 

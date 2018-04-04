@@ -11,12 +11,11 @@ import com.fun.zpetchain.constant.PetConstant;
 import com.fun.zpetchain.model.Pet;
 import com.fun.zpetchain.model.User;
 import com.fun.zpetchain.util.HttpUtil;
-import com.fun.zpetchain.util.TimeUtil;
 
 public class PetSale {
 
 	public static void main(String[] args) {
-		saleTask(0, 10000);
+		saleTask(0, 1000000);
 	}
 
 	public static void saleTask(long delay, long period) {
@@ -142,17 +141,44 @@ public class PetSale {
 		Integer amount = PetConstant.SALE_AMOUNT.get(k);
 
 		if (amount != null) {
+
+			// 天使 + 白眉
+			if (pet.getIsAngell() && pet.getIsWhiteEyes()) {
+				if (pet.getRareNum() > 4 && pet.getRareNum() % 2 == 1) {
+					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 20;
+				} else {
+					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 7;
+				}
+			}
+
 			if (pet.getIsAngell()) {
-				amount = amount + PetConstant.ANGEL_RAISE;
+				if (pet.getRareNum() > 4 && pet.getRareNum() % 2 == 1) {
+					amount = amount + PetConstant.ANGEL_RAISE / (pet.getGeneration() + 1) * (pet.getGeneration() + 4);
+				} else {
+					amount = amount + PetConstant.ANGEL_RAISE;
+				}
+				if (pet.getRareAttrs().contains("体型")) {
+					amount += PetConstant.ANGEL_RAISE / (pet.getGeneration() + 2);
+				}
 				System.out.println(k + "_" + "........天使宠物...售价" + amount);
 			}
+
 			if (pet.getIsWhiteEyes()) {
-				amount = amount + PetConstant.WHITE_EYES;
+				if (pet.getRareNum() > 4 && pet.getRareNum() % 2 == 1) {
+					amount = amount + PetConstant.WHITE_EYES / (pet.getGeneration() + 1) * (pet.getGeneration() + 4);
+				} else {
+					amount = amount + PetConstant.WHITE_EYES;
+				}
+				if (pet.getRareAttrs().contains("眼睛")) {
+					amount += PetConstant.WHITE_EYES / (pet.getGeneration() + 2);
+				}
 				System.out.println(k + "_" + "........白眉斗眼宠物...售价" + amount);
 			}
 
 			System.out.println(k + "  售价：" + amount);
-			return amount.toString();
+			if (amount > 0) {
+				return amount.toString();
+			}
 		}
 
 		return "";

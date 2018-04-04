@@ -41,18 +41,18 @@ public class PetConstant {
 	/**
 	 * 验证码有效时间
 	 */
-	public static final int VALID_TIME = 60000;
+	public static final int VALID_TIME = 50000;
 
 	/**
 	 * 验证码缓存数
 	 */
-	public static final int SAFE_QUEUE_SIZE = 20;
+	public static final int SAFE_QUEUE_SIZE = 40;
 
 	/**
 	 * 最大尝试购买次数
 	 */
 
-	public final static int TYR_COUNT = 10;
+	public final static int TYR_COUNT = 15;
 
 	/**
 	 * 根据售价升序
@@ -108,10 +108,10 @@ public class PetConstant {
 	/**
 	 * 天使卖出加价金额
 	 */
-	public final static Integer ANGEL_RAISE = 11000;
+	public final static Integer ANGEL_RAISE = 7000;
 
 	/**
-	 * 白眉斗眼加价金额
+	 * 白眉斗眼卖出加价金额
 	 */
 	public final static Integer WHITE_EYES = 5000;
 
@@ -129,15 +129,15 @@ public class PetConstant {
 		SALE_AMOUNT.put("史诗_0_2天_4稀", 6200);
 		SALE_AMOUNT.put("史诗_0_4天_4稀", 5500);
 
-		SALE_AMOUNT.put("史诗_1_0分钟_4稀", 5500);
-		SALE_AMOUNT.put("史诗_1_24小时_4稀", 5400);
-		SALE_AMOUNT.put("史诗_1_2天_4稀", 5100);
-		SALE_AMOUNT.put("史诗_1_4天_4稀", 4888);
+		SALE_AMOUNT.put("史诗_1_0分钟_4稀", 5400);
+		SALE_AMOUNT.put("史诗_1_24小时_4稀", 4800);
+		SALE_AMOUNT.put("史诗_1_2天_4稀", 4600);
+		SALE_AMOUNT.put("史诗_1_4天_4稀", 4100);
 
-		SALE_AMOUNT.put("史诗_2_0分钟_4稀", 6400);
-		SALE_AMOUNT.put("史诗_2_24小时_4稀", 5888);
-		SALE_AMOUNT.put("史诗_2_2天_4稀", 5666);
-		SALE_AMOUNT.put("史诗_2_4天_4稀", 5444);
+		SALE_AMOUNT.put("史诗_2_0分钟_4稀", 5200);
+		SALE_AMOUNT.put("史诗_2_24小时_4稀", 4900);
+		SALE_AMOUNT.put("史诗_2_2天_4稀", 4400);
+		SALE_AMOUNT.put("史诗_2_4天_4稀", 4100);
 
 		SALE_AMOUNT.put("史诗_0_0分钟_5稀", 33000);
 		SALE_AMOUNT.put("史诗_0_24小时_5稀", 30000);
