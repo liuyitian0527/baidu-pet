@@ -1,10 +1,9 @@
 package com.fun.zpetchain;
 
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -43,7 +42,7 @@ public class PetBuy {
 	private static final Logger logger = LoggerFactory.getLogger(PetBuy.class);
 
 	public final static Map<String, Integer> LIMIT_MAP = new HashMap<String, Integer>();
-	public static Set<String> petCache = new HashSet<String>(10);
+	public static LinkedHashSet<String> petCache = new LinkedHashSet<String>(10);
 
 	/**
 	 * main方法启动购买
@@ -57,7 +56,7 @@ public class PetBuy {
 			// 验证码初始化
 			VerCodeTask.init();
 			// 10分后自动上下架
-			PetSale.saleTask(1000 * 60 * 3, 1000 * 60 * 20);
+			PetSale.saleTask(1000 * 60 * 20, 1000 * 60 * 40);
 		} catch (Exception e) {
 			logger.error("init fail. " + e.getMessage());
 		}
@@ -68,8 +67,9 @@ public class PetBuy {
 				@Override
 				public void run() {
 					try {
-						if (user.getName().equalsIgnoreCase("zhangyu")) {
-							PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_AMT, PetConstant.FILTER_COND_EPIC, user);
+						if (user.getName().equalsIgnoreCase("liuyitian")) {
+//							PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_AMT, PetConstant.FILTER_COND_EPIC, user);
+							 PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_TIME, PetConstant.FILTER_COND_EPIC, user);
 						} else {
 							PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_TIME, PetConstant.FILTER_COND_EPIC, user);
 						}
@@ -79,7 +79,7 @@ public class PetBuy {
 				}
 
 			};
-			timer.scheduleAtFixedRate(task, 0, 200);
+			timer.scheduleAtFixedRate(task, 3000, 400);
 		}
 	}
 
@@ -138,18 +138,24 @@ public class PetBuy {
 				int trycount = 1;
 				logger.info(user.getName() + " 尝试购买 售价:{}, 等级:{}, 休息:{}, petId:{}", pet.getAmount(), pet.getRareDegree(), pet.getCoolingInterval(),
 						pet.getPetId());
-				while (trycount <= PetConstant.TYR_COUNT) {
-					trycount++;
-					if (tryBuy(pet, user)) {
-						// 线程休息3分钟，等待宠物上链
-						Thread.sleep(1000 * 60 * 3);
-						break;
-					} else {
-						try {
-							Thread.sleep(100);
-						} catch (InterruptedException e) {
+				while (true) {
+					if (trycount <= PetConstant.TYR_COUNT) {
+						trycount++;
+						if (tryBuy(pet, user, true)) {
+							// 线程休息3分钟，等待宠物上链
+							Thread.sleep(1000 * 60 * 3);
+							break;
+						} else {
+							try {
+								Thread.sleep(200);
+							} catch (InterruptedException e) {
+							}
+							continue;
 						}
-						continue;
+					} else {
+						addCache(pet);
+						logger.info("忽略宠物：" + pet);
+						break;
 					}
 				}
 			}
@@ -176,9 +182,7 @@ public class PetBuy {
 				continue;
 			}
 			/*
-			 * if (coolingInterval.indexOf("天") > -1 &&
-			 * Integer.parseInt(coolingInterval.charAt(0) + "") >= 2)
-			 * { continue; }
+			 * if (coolingInterval.indexOf("天") > -1 && Integer.parseInt(coolingInterval.charAt(0) + "") >= 2) { continue; }
 			 */
 
 			// 只买0代
@@ -196,7 +200,7 @@ public class PetBuy {
 
 		for (String degree : Pet.levelValueMap.keySet()) {
 			Pet petPrt = lowestPetMap.get(degree);
-			if (petPrt != null) {
+			if (petPrt != null && System.currentTimeMillis() % 5 == 0) {
 				System.out.println(String.format(user.getName() + "  %s: 售价:%s, 等级:%s %s, 休息:%s, petId:%s", sortType, petPrt.getAmount(),
 						petPrt.getRareDegree(), petPrt.getGeneration() + "代", petPrt.getCoolingInterval(), petPrt.getPetId()));
 			}
@@ -220,9 +224,9 @@ public class PetBuy {
 	 * @param user
 	 * @return
 	 */
-	public static boolean tryBuy(Pet pet, User user) {
+	public static boolean tryBuy(Pet pet, User user, Boolean isFileLog) {
 		VerCode verCode = VerCodeTask.getVerCodeInfo(user);
-		if (verCode == null) {
+		if (verCode == null || petCache.contains(pet.getPetId())) {
 			return false;
 		}
 		Map<String, Object> paraMap = new HashMap<String, Object>(16);
@@ -247,13 +251,13 @@ public class PetBuy {
 				String errorMsg = jsonResult.getString("errorMsg");
 				String errorNo = jsonResult.getString("errorNo");
 				if (errorNo.equals("00")) {
-					String str = String.format(user.getName() + " 购买成功！交易时间：%s, petId:%s, 售价：%s, 等级:%s %s, 休息时间：%s ",
-							TimeUtil.now(TimeUtil.TARGET_1), pet.getId(), pet.getAmount(), pet.getRareDegree(), pet.getGeneration() + "代",
-							pet.getCoolingInterval());
+					String str = String.format(TimeUtil.now(TimeUtil.TARGET_1) + " " + user.getName() + " 购买成功！ petId:%s, 售价：%s, 等级:%s %s, 休息时间：%s ",
+							pet.getId(), pet.getAmount(), pet.getRareDegree(), pet.getGeneration() + "代", pet.getCoolingInterval());
 
-					FileUtil.appendTxt(str + "\n", PathConstant.BUY_PATH);
-					System.out.println(str);
-
+					addCache(pet);
+					if (isFileLog) {
+						FileUtil.appendTxt(str + "\n", PathConstant.BUY_PATH);
+					}
 					return true;
 				} else if ("有人抢先下单啦".equals(errorMsg)) {
 					addCache(pet);

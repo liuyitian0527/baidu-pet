@@ -1,9 +1,5 @@
 package com.fun.zpetchain.model;
 
-/**
- * @author Acsi
- * @date 2018/2/10
- */
 public class User {
 	private String name;
 	private String cookie;

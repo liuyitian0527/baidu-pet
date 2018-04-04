@@ -1,7 +1,16 @@
 package com.fun.zpetchain;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
+import java.util.function.ToLongFunction;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -77,11 +86,38 @@ public class PetCenter {
 		List<Pet> rePets = new ArrayList<Pet>();
 		for (Pet pet : pets) {
 			Pet info = getPetById(pet.getPetId(), user);
+			String amount = null;
+			try {
+				amount = PetSale.getSalePetAmount(info);
+			} catch (Exception e) {
+				e.printStackTrace();
+				continue;
+			}
+			if (StringUtils.isNotBlank(amount)) {
+				info.setAmount(new BigDecimal(amount).doubleValue());
+			}
 			rePets.add(info);
 		}
 		System.out.println(user.getName() + " 稀有属性数量查询...结束...");
 
+		sort(rePets);
 		return rePets;
+	}
+
+	private static void sort(List<Pet> pets) {
+		Collections.sort(pets, new Comparator<Pet>() {
+			@Override
+			public int compare(Pet o1, Pet o2) {
+				if (o1.getAmount() != null && o2.getAmount() != null) {
+					if (o1.getAmount() > o2.getAmount()) {
+						return 1;
+					} else if (o1.getAmount() < o2.getAmount()) {
+						return -1;
+					}
+				}
+				return 0;
+			}
+		});
 	}
 
 	/**
@@ -103,6 +139,7 @@ public class PetCenter {
 			// 稀有属性数量赋值
 			int rareNum = 0;
 			JSONArray attrs = pJson.getJSONArray("attributes");
+			List<String> rareAttrs = new ArrayList<String>();
 			for (int i = 0; i < attrs.size(); i++) {
 				JSONObject atr = attrs.getJSONObject(i);
 				String name = atr.getString("name");
@@ -115,7 +152,7 @@ public class PetCenter {
 						pet.setIsAngell(false);
 					}
 				} else if (name.equals("眼睛")) {
-					if (value.equals("白眉斗眼")) {
+					if (value.equals("白眉斗眼") || value.equals("小对眼")) {
 						pet.setIsWhiteEyes(true);
 					} else {
 						pet.setIsWhiteEyes(false);
@@ -124,9 +161,11 @@ public class PetCenter {
 
 				if ("稀有".equals(atr.getString("rareDegree"))) {
 					rareNum++;
+					rareAttrs.add(name);
 				}
 			}
 
+			pet.setRareAttrs(StringUtils.join(rareAttrs, ","));
 			pet.setRareNum(rareNum);
 		}
 

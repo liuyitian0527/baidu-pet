@@ -1,5 +1,6 @@
 package com.fun.zpetchain.task;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -11,6 +12,7 @@ import com.fun.zpetchain.constant.PetConstant;
 import com.fun.zpetchain.model.Pet;
 import com.fun.zpetchain.model.User;
 import com.fun.zpetchain.util.FileUtil;
+import com.fun.zpetchain.util.TimeUtil;
 
 /**
  * Title. 超级稀有抓取<br>
@@ -26,6 +28,7 @@ import com.fun.zpetchain.util.FileUtil;
 public class PetBySuperRare {
 
 	private static final Lock lock = new ReentrantLock();
+	private static LinkedHashSet<String> superPet = new LinkedHashSet<>(2000);
 
 	/**
 	 * 超级稀有购买，自动加价<br>
@@ -42,6 +45,15 @@ public class PetBySuperRare {
 					@Override
 					public void run() {
 						for (Pet pet : pets) {
+							if (superPet.size() >= 2000) {
+								superPet.clear();
+								System.out.println("超级稀有缓存清理...");
+							}
+							if (superPet.contains(pet.getId())) {
+								continue;
+							}
+							superPet.add(pet.getId());
+
 							Integer superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree()) + PetConstant.SUPER_RARE_RAISE;
 							if (pet.getAmount() > superAmount) {
 								continue;
@@ -55,19 +67,19 @@ public class PetBySuperRare {
 							// 大于4天，不考虑
 							String coolingInterval = pInfo.getCoolingInterval();
 							if (coolingInterval.indexOf("天") > -1 && Integer.parseInt(coolingInterval.charAt(0) + "") >= 4) {
-								superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree());
-								if (pInfo.getAmount() > superAmount) {
-									continue;
-								}
+								continue;
 							}
 
 							// 超级稀有
 							if (pInfo.getRareNum() > 4) {
+								FileUtil.appendTxt(TimeUtil.now(TimeUtil.TARGET_1) + " " + user.getName() + " 【超级稀有】尝试购买: " + pInfo + "\n",
+										PathConstant.BUY_PATH);
 								int trycount = 1;
-								while (trycount <= 20) {
+								while (trycount <= 40) {
 									trycount++;
-									if (PetBuy.tryBuy(pet, user)) {
-										FileUtil.appendTxt(user.getName() + " 【超级稀有】购买成功: " + pInfo, PathConstant.BUY_PATH);
+									if (PetBuy.tryBuy(pet, user, false)) {
+										FileUtil.appendTxt(TimeUtil.now(TimeUtil.TARGET_1) + " " + user.getName() + " 【超级稀有】购买成功: " + pInfo + "\n",
+												PathConstant.BUY_PATH);
 										// 线程休息3分钟，等待宠物上链
 										try {
 											Thread.sleep(1000 * 60 * 3);
@@ -77,7 +89,7 @@ public class PetBySuperRare {
 										break;
 									} else {
 										try {
-											Thread.sleep(100);
+											Thread.sleep(300);
 										} catch (InterruptedException e) {
 										}
 										continue;
@@ -89,17 +101,24 @@ public class PetBySuperRare {
 							else {
 								if (pInfo.getIsAngell() || pInfo.getIsWhiteEyes()) {
 
-									if (coolingInterval.indexOf("天") > -1) {
+									if (!coolingInterval.equals("0分钟")) {
+										continue;
+									}
+									if (pInfo.getGeneration() == 0) {
+										superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree()) + 1500;
+									} else if (pInfo.getGeneration() == 1) {
+										superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree());
+									} else {
 										continue;
 									}
 
-									superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree()) + 2000;
 									if (pInfo.getAmount() <= superAmount) {
 										int trycount = 1;
 										while (trycount <= 20) {
 											trycount++;
-											if (PetBuy.tryBuy(pet, user)) {
-												FileUtil.appendTxt(user.getName() + " 【天使|白眉】购买成功: " + pInfo, PathConstant.BUY_PATH);
+											if (PetBuy.tryBuy(pet, user, false)) {
+												FileUtil.appendTxt(TimeUtil.now(TimeUtil.TARGET_1) + " " + user.getName() + " 【天使|白眉】购买成功: " + pInfo
+														+ "\n", PathConstant.BUY_PATH);
 												// 线程休息3分钟，等待宠物上链
 												try {
 													Thread.sleep(1000 * 60 * 3);

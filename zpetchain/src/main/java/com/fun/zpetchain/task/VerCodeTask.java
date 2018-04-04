@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Timer;
@@ -27,15 +26,6 @@ import com.fun.zpetchain.util.OcrUtil;
 
 public class VerCodeTask {
 	private static Logger logger = Logger.getLogger(VerCodeTask.class);
-
-	public static void main(String[] args) {
-		Timer timer = new Timer();
-		timer.scheduleAtFixedRate(new TimerTask() {
-			public void run() {
-				System.out.println("-------设定要指定任务--------");
-			}
-		}, 1000, 2000);
-	}
 
 	public static Map<User, Queue<VerCode>> queueMap = new LinkedHashMap<User, Queue<VerCode>>();
 
@@ -60,46 +50,36 @@ public class VerCodeTask {
 		return queueMap.get(user).poll();
 	}
 
+	/**
+	 * 验证码自动清理、存储
+	 */
 	public static void doTask() {
-		// 单位: 毫秒
-		final long timeInterval = 2000;
-		Runnable runnable = new Runnable() {
+		Timer timer = new Timer();
+		TimerTask task = new TimerTask() {
+			@Override
 			public void run() {
-				while (true) {
-
-					clearInvalidVerCode(PetConstant.USERS);
-					// 随机获取User
-					User user = PetConstant.USERS.get((int) (System.currentTimeMillis() % PetConstant.USERS.size()));
-					genVerCodeByAcount(user);
-
-					try {
-						Thread.sleep(timeInterval);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+				try {
+					for (User user : PetConstant.USERS) {
+						genVerCodeByAcount(user);
 					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		};
-		Thread thread = new Thread(runnable);
-		thread.start();
+		timer.scheduleAtFixedRate(task, 3000, 2000);
 	}
 
-	private static void clearInvalidVerCode(List<User> users) {
-		for (User user : users) {
-			Queue<VerCode> queue = queueMap.get(user);
-			while (!queue.isEmpty()) {
-				if (System.currentTimeMillis() - queue.peek().getCreateTime() > PetConstant.VALID_TIME) {
-					// logger.info(user.getName() + " 验证码过期清理成功");
-					queue.poll();
-				} else {
-					break;
-				}
-			}
-		}
-	}
-
+	/**
+	 * 验证码轮询存储，清理
+	 * 
+	 * @param user
+	 */
 	private static void genVerCodeByAcount(User user) {
 		Queue<VerCode> queue = queueMap.get(user);
+		if (System.currentTimeMillis() % 3 == 0) {
+			System.out.println(user.getName() + " 验证码长度=  " + queue.size());
+		}
 		while (!queue.isEmpty()) {
 			if (System.currentTimeMillis() - queue.peek().getCreateTime() > PetConstant.VALID_TIME) {
 				queue.poll();
@@ -118,19 +98,27 @@ public class VerCodeTask {
 	 * @param user
 	 */
 	private static void storeVerCode(User user) {
-		VerCode vCode = null;
-		try {
-			vCode = getVerCode(user);
-			if (vCode != null) {
-				queueMap.get(user).offer(vCode);
-				// logger.info("储备验证码成功，user:{" + user.getName() + "} code:{" + vCode.getvCode() + "}");
-			}
-		} catch (Throwable e) {
-			logger.error("请求验证码失败", e);
+		int i = 0;
+		while (i <= 30) {
+			i++;
+			VerCode vCode = null;
 			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
+				vCode = getVerCode(user);
+				if (vCode != null) {
+					queueMap.get(user).offer(vCode);
+					if (queueMap.get(user).size() >= PetConstant.SAFE_QUEUE_SIZE) {
+						break;
+					}
+				}
+
+				try {
+					Thread.sleep(300);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+
+			} catch (Throwable e) {
+				logger.error("请求验证码失败", e);
 			}
 		}
 	}
@@ -149,7 +137,7 @@ public class VerCodeTask {
 		JSONObject jsonResult = HttpUtil.post(PetConstant.CAPTCHA_URL, JSONObject.toJSONString(paraMap).toString(), user);
 
 		try {
-			if (jsonResult == null) {
+			if (jsonResult == null || !jsonResult.getString("errorNo").equals(PetConstant.SUCCESS)) {
 				return null;
 			}
 			String imgData = jsonResult.getJSONObject("data").get("img").toString();
@@ -176,7 +164,8 @@ public class VerCodeTask {
 			}
 			is.close();
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			e.printStackTrace();
+			logger.error("验证码解析失败：" + e.getMessage());
 		} finally {
 		}
 		return null;

@@ -69,7 +69,7 @@ public class HttpUtil {
 				logger.error("post rsp code ：" + result.getStatusLine().getStatusCode());
 			}
 		} catch (IOException e) {
-			logger.error("post error:[{}]", e.getMessage());
+			logger.error("post error:[{}] - url:{}", e.getMessage(), url);
 		}
 
 		return jsonResult;

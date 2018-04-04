@@ -1,5 +1,6 @@
 package com.fun.zpetchain;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -11,12 +12,11 @@ import com.fun.zpetchain.constant.PetConstant;
 import com.fun.zpetchain.model.Pet;
 import com.fun.zpetchain.model.User;
 import com.fun.zpetchain.util.HttpUtil;
-import com.fun.zpetchain.util.TimeUtil;
 
 public class PetSale {
 
 	public static void main(String[] args) {
-		saleTask(0, 10000);
+		saleTask(0, 1000000);
 	}
 
 	public static void saleTask(long delay, long period) {
@@ -25,13 +25,13 @@ public class PetSale {
 			@Override
 			public void run() {
 
-				for (User user : PetConstant.USERS) {
-					List<Pet> pets = PetCenter.getMyPetList(user, false);
-					for (Pet pet : pets) {
-						cancleSalePet(pet, user); // 下架
-					}
-					System.out.println(user.getName() + "............................下架结束！");
-				}
+//				for (User user : PetConstant.USERS) {
+//					List<Pet> pets = PetCenter.getMyPetList(user, false);
+//					for (Pet pet : pets) {
+//						cancleSalePet(pet, user); // 下架
+//					}
+//					System.out.println(user.getName() + "............................下架结束！");
+//				}
 
 				for (User user : PetConstant.USERS) {
 					List<Pet> pets = PetCenter.getMyPetList(user, true);
@@ -58,13 +58,14 @@ public class PetSale {
 
 	public static void salePet(Pet pet, User user) {
 		try {
-			String amount = getSalePetAmount(pet);
-			if (StringUtils.isNotBlank(amount)) {
+			String amount = pet.getAmount() == null ? null : pet.getAmount().toString();
+			if (StringUtils.isNotBlank(amount) && pet.getAmount() > 0 && new BigDecimal(amount).compareTo(BigDecimal.ZERO) > 0
+					&& "0".equals(pet.getShelfStatus())) {
 				String params = getSalePetParams(pet, amount);
 				// 接口调用
 				JSONObject result = HttpUtil.post(PetConstant.SALE_PET, params, user);
 				if (PetConstant.SUCCESS.equals(result.getString("errorNo"))) {
-					System.out.println("上架成功");
+					System.out.println("上架成功: " + pet.getAmount());
 				} else {
 					System.out.println("上架失败：" + result);
 				}
@@ -127,7 +128,7 @@ public class PetSale {
 		return j.toString();
 	}
 
-	private static String getSalePetAmount(Pet pet) {
+	public static String getSalePetAmount(Pet pet) {
 		if (StringUtils.isNotBlank(pet.getShelfStatus()) && "1".equals(pet.getShelfStatus())) {
 			System.out.println("销售中...跳过出售！");
 			return "";
@@ -142,17 +143,44 @@ public class PetSale {
 		Integer amount = PetConstant.SALE_AMOUNT.get(k);
 
 		if (amount != null) {
+
+			// 天使 + 白眉
+			if (pet.getIsAngell() && pet.getIsWhiteEyes()) {
+				if (pet.getRareNum() > 4 && pet.getRareNum() % 2 == 1) {
+					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 20;
+				} else {
+					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 7;
+				}
+			}
+
 			if (pet.getIsAngell()) {
-				amount = amount + PetConstant.ANGEL_RAISE;
+				if (pet.getRareNum() > 4 && pet.getRareNum() % 2 == 1) {
+					amount = amount + PetConstant.ANGEL_RAISE / (pet.getGeneration() + 1) * (pet.getGeneration() + 4);
+				} else {
+					amount = amount + PetConstant.ANGEL_RAISE;
+				}
+				if (pet.getRareAttrs().contains("体型")) {
+//					amount += PetConstant.ANGEL_RAISE / (pet.getGeneration() + 2);
+				}
 				System.out.println(k + "_" + "........天使宠物...售价" + amount);
 			}
+
 			if (pet.getIsWhiteEyes()) {
-				amount = amount + PetConstant.WHITE_EYES;
+				if (pet.getRareNum() > 4 && pet.getRareNum() % 2 == 1) {
+					amount = amount + PetConstant.WHITE_EYES / (pet.getGeneration() + 1) * (pet.getGeneration() + 4);
+				} else {
+					amount = amount + PetConstant.WHITE_EYES;
+				}
+				if (pet.getRareAttrs().contains("眼睛")) {
+//					amount += PetConstant.WHITE_EYES / (pet.getGeneration() + 2);
+				}
 				System.out.println(k + "_" + "........白眉斗眼宠物...售价" + amount);
 			}
 
 			System.out.println(k + "  售价：" + amount);
-			return amount.toString();
+			if (amount > 0) {
+				return amount.toString();
+			}
 		}
 
 		return "";
