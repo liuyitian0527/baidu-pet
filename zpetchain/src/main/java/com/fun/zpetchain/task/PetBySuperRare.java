@@ -89,7 +89,7 @@ public class PetBySuperRare {
 										break;
 									} else {
 										try {
-											Thread.sleep(300);
+											Thread.sleep(100);
 										} catch (InterruptedException e) {
 										}
 										continue;
@@ -114,7 +114,7 @@ public class PetBySuperRare {
 
 									if (pInfo.getAmount() <= superAmount) {
 										int trycount = 1;
-										while (trycount <= 20) {
+										while (trycount <= 40) {
 											trycount++;
 											if (PetBuy.tryBuy(pet, user, false)) {
 												FileUtil.appendTxt(TimeUtil.now(TimeUtil.TARGET_1) + " " + user.getName() + " 【天使|白眉】购买成功: " + pInfo

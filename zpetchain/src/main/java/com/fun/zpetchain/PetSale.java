@@ -25,13 +25,15 @@ public class PetSale {
 			@Override
 			public void run() {
 
-//				for (User user : PetConstant.USERS) {
-//					List<Pet> pets = PetCenter.getMyPetList(user, false);
-//					for (Pet pet : pets) {
-//						cancleSalePet(pet, user); // 下架
-//					}
-//					System.out.println(user.getName() + "............................下架结束！");
-//				}
+				for (User user : PetConstant.USERS) {
+					List<Pet> pets = PetCenter.getMyPetList(user, false);
+					for (Pet pet : pets) {
+						if (user.getName().equals("zhangyu")) {
+							cancleSalePet(pet, user); // 下架
+						}
+					}
+					System.out.println(user.getName() + "............................下架结束！");
+				}
 
 				for (User user : PetConstant.USERS) {
 					List<Pet> pets = PetCenter.getMyPetList(user, true);
@@ -160,7 +162,7 @@ public class PetSale {
 					amount = amount + PetConstant.ANGEL_RAISE;
 				}
 				if (pet.getRareAttrs().contains("体型")) {
-//					amount += PetConstant.ANGEL_RAISE / (pet.getGeneration() + 2);
+					// amount += PetConstant.ANGEL_RAISE / (pet.getGeneration() + 2);
 				}
 				System.out.println(k + "_" + "........天使宠物...售价" + amount);
 			}
@@ -172,7 +174,7 @@ public class PetSale {
 					amount = amount + PetConstant.WHITE_EYES;
 				}
 				if (pet.getRareAttrs().contains("眼睛")) {
-//					amount += PetConstant.WHITE_EYES / (pet.getGeneration() + 2);
+					// amount += PetConstant.WHITE_EYES / (pet.getGeneration() + 2);
 				}
 				System.out.println(k + "_" + "........白眉斗眼宠物...售价" + amount);
 			}

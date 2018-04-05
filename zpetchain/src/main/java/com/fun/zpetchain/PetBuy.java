@@ -28,7 +28,7 @@ import com.fun.zpetchain.util.TimeUtil;
 /**
  * 
  * Title.宠物购买类 <br>
- * Description. 
+ * Description.
  * <p>
  * Copyright: Copyright (c) 2018-3-31 上午12:35:35
  * <p>
@@ -56,7 +56,7 @@ public class PetBuy {
 			// 验证码初始化
 			VerCodeTask.init();
 			// 10分后自动上下架
-			PetSale.saleTask(1000 * 60 * 20, 1000 * 60 * 40);
+			// PetSale.saleTask(1000 * 60 * 20, 1000 * 60 * 40);
 		} catch (Exception e) {
 			logger.error("init fail. " + e.getMessage());
 		}
@@ -79,7 +79,7 @@ public class PetBuy {
 				}
 
 			};
-			timer.scheduleAtFixedRate(task, 3000, 400);
+			timer.scheduleAtFixedRate(task, 3000, 100);
 		}
 	}
 
@@ -209,7 +209,7 @@ public class PetBuy {
 		Pet pet = null;
 		for (String degree : Pet.levelValueMap.keySet()) {
 			pet = lowestPetMap.get(degree);
-			if (pet != null && pet.getAmount() <= LIMIT_MAP.get(pet.getRareDegree())) {
+			if (pet != null && pet.getAmount() <= (LIMIT_MAP.get(pet.getRareDegree()) - 200)) {
 				return pet;
 			}
 		}
