@@ -28,7 +28,7 @@ import com.fun.zpetchain.util.TimeUtil;
 /**
  * 
  * Title.宠物购买类 <br>
- * Description.
+ * Description. 
  * <p>
  * Copyright: Copyright (c) 2018-3-31 上午12:35:35
  * <p>
@@ -68,8 +68,8 @@ public class PetBuy {
 				public void run() {
 					try {
 						if (user.getName().equalsIgnoreCase("liuyitian")) {
-//							PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_AMT, PetConstant.FILTER_COND_EPIC, user);
-							 PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_TIME, PetConstant.FILTER_COND_EPIC, user);
+							// PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_AMT, PetConstant.FILTER_COND_EPIC, user);
+							PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_TIME, PetConstant.FILTER_COND_EPIC, user);
 						} else {
 							PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_TIME, PetConstant.FILTER_COND_EPIC, user);
 						}
