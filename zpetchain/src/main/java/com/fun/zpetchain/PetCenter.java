@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +15,7 @@ import com.fun.zpetchain.constant.PetConstant;
 import com.fun.zpetchain.model.Pet;
 import com.fun.zpetchain.model.User;
 import com.fun.zpetchain.util.HttpUtil;
+import com.fun.zpetchain.util.TimeUtil;
 
 /**
  * 
@@ -28,6 +30,10 @@ import com.fun.zpetchain.util.HttpUtil;
  * <p>
  */
 public class PetCenter {
+
+	public static void main(String[] args) {
+		orderTotal();
+	}
 
 	/**
 	 * 我的宠物列表
@@ -196,4 +202,70 @@ public class PetCenter {
 		return j.toString();
 	}
 
+	public static void orderTotal() {
+		String date = TimeUtil.format(new Date(), TimeUtil.TARGET_3);
+		for (User user : PetConstant.USERS) {
+			int pageNo = 1, outCount = 0, inCount = 0;
+			BigDecimal outPrice = BigDecimal.ZERO, inPrice = BigDecimal.ZERO;
+
+			Boolean b = true;
+			while (b) {
+				try {
+					// 入参封装
+					String params = getOrderTotalParams(pageNo);
+
+					// 接口调用
+					JSONObject obj = HttpUtil.post(PetConstant.ORDER_LIST, params, user);
+
+					if (obj != null && PetConstant.SUCCESS.equals(obj.getString("errorNo"))) {
+						JSONArray array = obj.getJSONObject("data").getJSONArray("dataList");
+						for (int i = 0; i < array.size(); i++) {
+							JSONObject j = array.getJSONObject(i);
+							String transDate = j.getString("transDate");
+							if (!transDate.equals(date)) {
+								b = false;
+								break;
+							}
+
+							String status = j.getString("status");
+							BigDecimal amount = j.getBigDecimal("amount");
+							if (status.equals("1")) { // 卖出
+								outCount++;
+								outPrice = outPrice.add(amount);
+
+							} else if (status.equals("2")) { // 买入
+								inCount++;
+								inPrice = inPrice.add(amount);
+							}
+						}
+						pageNo++;
+					} else {
+						System.out.println(user.getName() + " 订单列表获取失败，返回：" + obj);
+						break;
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					break;
+				}
+			}
+
+			System.out.println(String.format(user.getName() + " 买入：%s笔 -%s，卖出：%s笔 +%s", inCount, inPrice, outCount, outPrice));
+		}
+
+	}
+
+	private static String getOrderTotalParams(int pageNo) {
+		JSONObject j = new JSONObject();
+		j.put("appId", "1");
+		j.put("nounce", "");
+		j.put("pageNo", pageNo);
+		j.put("pageSize", 10);
+		j.put("pageTotal", "-1");
+		j.put("requestId", System.currentTimeMillis());
+		j.put("timeStamp", "");
+		j.put("token", "");
+		j.put("tpl", "");
+
+		return j.toString();
+	}
 }

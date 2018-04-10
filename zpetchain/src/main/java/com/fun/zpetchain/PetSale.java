@@ -160,7 +160,8 @@ public class PetSale {
 					amount = amount + PetConstant.ANGEL_RAISE;
 				}
 				if (pet.getRareAttrs().contains("体型")) {
-//					amount += PetConstant.ANGEL_RAISE / (pet.getGeneration() + 2);
+					// amount += PetConstant.ANGEL_RAISE /
+					// (pet.getGeneration() + 2);
 				}
 				System.out.println(k + "_" + "........天使宠物...售价" + amount);
 			}
@@ -172,7 +173,8 @@ public class PetSale {
 					amount = amount + PetConstant.WHITE_EYES;
 				}
 				if (pet.getRareAttrs().contains("眼睛")) {
-//					amount += PetConstant.WHITE_EYES / (pet.getGeneration() + 2);
+					// amount += PetConstant.WHITE_EYES /
+					// (pet.getGeneration() + 2);
 				}
 				System.out.println(k + "_" + "........白眉斗眼宠物...售价" + amount);
 			}
