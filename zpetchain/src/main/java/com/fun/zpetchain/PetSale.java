@@ -25,13 +25,13 @@ public class PetSale {
 			@Override
 			public void run() {
 
-//				for (User user : PetConstant.USERS) {
-//					List<Pet> pets = PetCenter.getMyPetList(user, false);
-//					for (Pet pet : pets) {
-//						cancleSalePet(pet, user); // 下架
-//					}
-//					System.out.println(user.getName() + "............................下架结束！");
-//				}
+				for (User user : PetConstant.USERS) {
+					List<Pet> pets = PetCenter.getMyPetList(user, false);
+					for (Pet pet : pets) {
+						cancleSalePet(pet, user); // 下架
+					}
+					System.out.println(user.getName() + "............................下架结束！");
+				}
 
 				for (User user : PetConstant.USERS) {
 					List<Pet> pets = PetCenter.getMyPetList(user, true);
