@@ -16,7 +16,7 @@ import com.fun.zpetchain.util.HttpUtil;
 public class PetSale {
 
 	public static void main(String[] args) {
-		saleTask(0, 1000000);
+		saleTask(0, 1000000000);
 	}
 
 	public static void saleTask(long delay, long period) {
@@ -26,20 +26,31 @@ public class PetSale {
 			public void run() {
 
 				for (User user : PetConstant.USERS) {
-					List<Pet> pets = PetCenter.getMyPetList(user, false);
-					for (Pet pet : pets) {
-						cancleSalePet(pet, user); // 下架
-					}
-					System.out.println(user.getName() + "............................下架结束！");
-				}
-
-				for (User user : PetConstant.USERS) {
 					List<Pet> pets = PetCenter.getMyPetList(user, true);
 					for (Pet pet : pets) {
+						cancleSalePet(pet, user); // 下架
+
+						try {
+							// 线程休息500毫秒
+							Thread.sleep(500);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+
 						salePet(pet, user); // 上架
 					}
-					System.out.println(user.getName() + "............................上架结束！");
+					System.out.println(user.getName() + "............................上下架结束！");
 				}
+
+				// for (User user : PetConstant.USERS) {
+				// List<Pet> pets = PetCenter.getMyPetList(user,
+				// true);
+				// for (Pet pet : pets) {
+				// salePet(pet, user); // 上架
+				// }
+				// System.out.println(user.getName() +
+				// "............................上架结束！");
+				// }
 
 			}
 		};
@@ -85,12 +96,6 @@ public class PetSale {
 				if (result != null && PetConstant.SUCCESS.equals(result.getString("errorNo"))) {
 					System.out.println("下架成功：" + pet);
 					pet.setShelfStatus("0");
-					try {
-						// 线程休息500毫秒
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
 				}
 			}
 		} catch (Exception e) {
@@ -129,15 +134,6 @@ public class PetSale {
 	}
 
 	public static String getSalePetAmount(Pet pet) {
-		if (StringUtils.isNotBlank(pet.getShelfStatus()) && "1".equals(pet.getShelfStatus())) {
-			System.out.println("销售中...跳过出售！");
-			return "";
-		}
-
-		if (pet.getRareNum() == 0) {
-			System.out.println("0稀有...跳过出售！");
-			return "";
-		}
 
 		String k = pet.getRareDegree() + "_" + pet.getGeneration() + "_" + pet.getCoolingInterval() + "_" + pet.getRareNum() + "稀";
 		Integer amount = PetConstant.SALE_AMOUNT.get(k);
