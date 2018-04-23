@@ -159,6 +159,12 @@ public class PetCenter {
 					} else {
 						pet.setIsWhiteEyes(false);
 					}
+				} else if (name.equals("嘴巴")) {
+					if (value.equals("樱桃")) {
+						pet.setIsYingTao(true);
+					} else {
+						pet.setIsYingTao(false);
+					}
 				}
 
 				if ("稀有".equals(atr.getString("rareDegree"))) {

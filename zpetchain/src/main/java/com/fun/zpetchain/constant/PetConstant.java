@@ -68,6 +68,8 @@ public class PetConstant {
 	 * 筛选条件: 史诗 休息不限 状态 正常
 	 */
 	public final static String FILTER_COND_EPIC = "{\"1\":\"3\",\"6\":\"1\"}";
+	
+	public final static String FILTER_COND_COMMON = "{\"6\":\"1\"}";
 
 	/**
 	 * 筛选条件: 神话 休息不限 状态 正常
@@ -113,7 +115,7 @@ public class PetConstant {
 	/**
 	 * 白眉斗眼卖出加价金额
 	 */
-	public final static Integer WHITE_EYES = 3000;
+	public final static Integer WHITE_EYES = 6000;
 
 	/**
 	 * 超级稀有买入加价
