@@ -56,32 +56,41 @@ public class PetBuy {
 			// 验证码初始化
 			VerCodeTask.init();
 			// 10分后自动上下架
-			// PetSale.saleTask(1000 * 60 * 20, 1000 * 60 * 40);
+			PetSale.saleTask(1000 * 60 * 5, 1000 * 60 * 15);
 		} catch (Exception e) {
 			logger.error("init fail. " + e.getMessage());
 		}
 
-		for (final User user : PetConstant.USERS) {
 			Timer timer = new Timer();
 			TimerTask task = new TimerTask() {
 				@Override
 				public void run() {
 					try {
+						for (final User user : PetConstant.USERS) {
 						if (user.getName().equalsIgnoreCase("liuyitian")) {
 							// PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_AMT,
 							// PetConstant.FILTER_COND_EPIC, user);
-							PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_TIME, PetConstant.FILTER_COND_EPIC, user);
+							if (System.currentTimeMillis() % 2 == 0) {
+								PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_TIME, PetConstant.FILTER_COND_EPIC, user);
+							} else {
+								PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_AMT, PetConstant.FILTER_COND_MYTH, user);
+							}
 						} else {
 							PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_TIME, PetConstant.FILTER_COND_EPIC, user);
 						}
+					}
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 				}
 
 			};
-			timer.scheduleAtFixedRate(task, 3000, 100);
-		}
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			timer.scheduleAtFixedRate(task, 1000, 350);
 	}
 
 	private static void initProp() throws Exception {
@@ -179,7 +188,7 @@ public class PetBuy {
 		for (Pet pet : petArr) {
 			// 休息时间大于2天的，直接跳过
 			String coolingInterval = pet.getCoolingInterval();
-			if (!coolingInterval.equals("0分钟")) {
+			if (pet.getRareDegree().equals("史诗") && !coolingInterval.equals("0分钟")) {
 				continue;
 			}
 			/*
@@ -189,12 +198,12 @@ public class PetBuy {
 			 */
 
 			// 只买0代
-			if (pet.getGeneration() == 0) {
+			if ((pet.getGeneration() == 0 && pet.getRareDegree().equals("史诗")) || pet.getRareDegree().equals("神话")) {
 				Pet itemPet = lowestPetMap.get(pet.getRareDegree());
 				if (itemPet == null) {
 					lowestPetMap.put(pet.getRareDegree(), pet);
 				} else {
-					if (pet.getAmount() < itemPet.getAmount()) {
+					if (itemPet != null && pet.getAmount() < itemPet.getAmount()) {
 						lowestPetMap.put(pet.getRareDegree(), pet);
 					}
 				}
@@ -212,7 +221,7 @@ public class PetBuy {
 		Pet pet = null;
 		for (String degree : Pet.levelValueMap.keySet()) {
 			pet = lowestPetMap.get(degree);
-			if (pet != null && pet.getAmount() <= (LIMIT_MAP.get(pet.getRareDegree()) - 200)) {
+			if (pet != null && pet.getAmount() <= (LIMIT_MAP.get(pet.getRareDegree()) - 1)) {
 				return pet;
 			}
 		}
