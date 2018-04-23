@@ -77,7 +77,7 @@ public class VerCodeTask {
 	 */
 	private static void genVerCodeByAcount(User user) {
 		Queue<VerCode> queue = queueMap.get(user);
-		if (System.currentTimeMillis() % 3 == 0) {
+		if (System.currentTimeMillis() % 15 == 0) {
 			System.out.println(user.getName() + " 验证码长度=  " + queue.size());
 		}
 		while (!queue.isEmpty()) {
@@ -99,7 +99,7 @@ public class VerCodeTask {
 	 */
 	private static void storeVerCode(User user) {
 		int i = 0;
-		while (i <= 30) {
+		while (i <= 10) {
 			i++;
 			VerCode vCode = null;
 			try {
@@ -112,7 +112,7 @@ public class VerCodeTask {
 				}
 
 				try {
-					Thread.sleep(300);
+					Thread.sleep(100);
 				} catch (InterruptedException e1) {
 					e1.printStackTrace();
 				}
@@ -138,6 +138,7 @@ public class VerCodeTask {
 
 		try {
 			if (jsonResult == null || !jsonResult.getString("errorNo").equals(PetConstant.SUCCESS)) {
+				System.out.println("验证码返回：" + jsonResult.getString("errorMsg"));
 				return null;
 			}
 			String imgData = jsonResult.getJSONObject("data").get("img").toString();

@@ -29,4 +29,11 @@ public class VerCode {
 		this.createTime = createTime;
 	}
 
+	@Override
+	public String toString() {
+		return "VerCode [seed=" + seed + ", vCode=" + vCode + ", createTime=" + createTime + "]";
+	}
+
+	
+	
 }
