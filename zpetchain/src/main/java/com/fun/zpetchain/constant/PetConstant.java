@@ -52,7 +52,7 @@ public class PetConstant {
 	 * 最大尝试购买次数
 	 */
 
-	public final static int TYR_COUNT = 15;
+	public final static int TYR_COUNT = 40;
 
 	/**
 	 * 根据售价升序
@@ -110,7 +110,7 @@ public class PetConstant {
 	/**
 	 * 天使卖出加价金额
 	 */
-	public final static Integer ANGEL_RAISE = 3000;
+	public final static Integer ANGEL_RAISE = 4000;
 
 	/**
 	 * 白眉斗眼卖出加价金额
@@ -126,7 +126,7 @@ public class PetConstant {
 
 	static {
 		// key = 史诗_1代_2天_4稀
-		SALE_AMOUNT.put("史诗_0_0分钟_4稀", 6400);
+		SALE_AMOUNT.put("史诗_0_0分钟_4稀", 7400);
 		SALE_AMOUNT.put("史诗_0_24小时_4稀", 5500);
 		SALE_AMOUNT.put("史诗_0_2天_4稀", 5200);
 		SALE_AMOUNT.put("史诗_0_4天_4稀", 4800);

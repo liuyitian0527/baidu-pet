@@ -135,24 +135,18 @@ public class PetBySuperRare {
 						FileUtil.appendTxt(TimeUtil.now(TimeUtil.TARGET_1) + " " + user.getName() + " 【超级稀有】尝试购买: " + pInfo + "\n",
 								PathConstant.BUY_PATH);
 						int trycount = 1;
-						while (trycount <= 40) {
+						while (trycount <= 100) {
 							trycount++;
 							if (PetBuy.tryBuy(pet, user, false)) {
 								FileUtil.appendTxt(TimeUtil.now(TimeUtil.TARGET_1) + " " + user.getName() + " 【超级稀有】购买成功: " + pInfo + "\n",
 										PathConstant.BUY_PATH);
 								// 线程休息3分钟，等待宠物上链
-								try {
-									Thread.sleep(1000 * 60 * 3);
-								} catch (InterruptedException e) {
-									e.printStackTrace();
-								}
 								break;
 							} else {
 								try {
-									Thread.sleep(200);
+									Thread.sleep(100);
 								} catch (InterruptedException e) {
 								}
-								continue;
 							}
 						}
 					}
@@ -193,24 +187,18 @@ public class PetBySuperRare {
 
 							if (pInfo.getAmount() <= superAmount) {
 								int trycount = 1;
-								while (trycount <= 40) {
+								while (trycount <= 100) {
 									trycount++;
 									if (PetBuy.tryBuy(pet, user, false)) {
 										FileUtil.appendTxt(TimeUtil.now(TimeUtil.TARGET_1) + " " + user.getName() + " 【天使|白眉】购买成功: " + pInfo + "\n",
 												PathConstant.BUY_PATH);
 										// 线程休息3分钟，等待宠物上链
-										try {
-											Thread.sleep(1000 * 60 * 3);
-										} catch (InterruptedException e) {
-											e.printStackTrace();
-										}
 										break;
 									} else {
 										try {
 											Thread.sleep(100);
 										} catch (InterruptedException e) {
 										}
-										continue;
 									}
 								}
 							}
