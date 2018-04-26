@@ -1,5 +1,7 @@
 package com.fun.zpetchain;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -61,12 +63,12 @@ public class PetBuy {
 			logger.error("init fail. " + e.getMessage());
 		}
 
-			Timer timer = new Timer();
-			TimerTask task = new TimerTask() {
-				@Override
-				public void run() {
-					try {
-						for (final User user : PetConstant.USERS) {
+		Timer timer = new Timer();
+		TimerTask task = new TimerTask() {
+			@Override
+			public void run() {
+				try {
+					for (final User user : PetConstant.USERS) {
 						if (user.getName().equalsIgnoreCase("liuyitian")) {
 							// PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_AMT,
 							// PetConstant.FILTER_COND_EPIC, user);
@@ -79,18 +81,18 @@ public class PetBuy {
 							PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_TIME, PetConstant.FILTER_COND_EPIC, user);
 						}
 					}
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
-
-			};
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
 			}
-			timer.scheduleAtFixedRate(task, 1000, 350);
+
+		};
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		timer.scheduleAtFixedRate(task, 1000, 350);
 	}
 
 	private static void initProp() throws Exception {
@@ -142,8 +144,13 @@ public class PetBuy {
 			}
 
 			// 找出命中售价的宠物
-			Pet pet = choosePetFromPetArr(petArr, sortType, user);
+			List<Pet> pets = choosePetFromPetArr(petArr, sortType, user);
+			toBuy(pets, user);
+		}
+	}
 
+	public static void toBuy(List<Pet> pets, User user) throws InterruptedException {
+		for (Pet pet : pets) {
 			if (pet != null && !petCache.contains(pet.getPetId())) {
 				int trycount = 1;
 				logger.info(user.getName() + " 尝试购买 售价:{}, 等级:{}, 休息:{}, petId:{}", pet.getAmount(), pet.getRareDegree(), pet.getCoolingInterval(),
@@ -170,6 +177,7 @@ public class PetBuy {
 				}
 			}
 		}
+
 	}
 
 	/**
@@ -181,7 +189,8 @@ public class PetBuy {
 	 * @param sortType
 	 * @return
 	 */
-	public static Pet choosePetFromPetArr(List<Pet> petArr, String sortType, User user) {
+	public static List<Pet> choosePetFromPetArr(List<Pet> petArr, String sortType, User user) {
+		List<Pet> pets = new ArrayList<Pet>();
 
 		// 每代里面价格最低的宠物
 		Map<String, Pet> lowestPetMap = new HashMap<String, Pet>(16);
@@ -191,11 +200,6 @@ public class PetBuy {
 			if (pet.getRareDegree().equals("史诗") && !coolingInterval.equals("0分钟")) {
 				continue;
 			}
-			/*
-			 * if (coolingInterval.indexOf("天") > -1 &&
-			 * Integer.parseInt(coolingInterval.charAt(0) + "") >= 2)
-			 * { continue; }
-			 */
 
 			// 只买0代
 			if ((pet.getGeneration() == 0 && pet.getRareDegree().equals("史诗")) || pet.getRareDegree().equals("神话")) {
@@ -216,17 +220,16 @@ public class PetBuy {
 				System.out.println(String.format(user.getName() + "  %s: 售价:%s, 等级:%s %s, 休息:%s, petId:%s", sortType, petPrt.getAmount(),
 						petPrt.getRareDegree(), petPrt.getGeneration() + "代", petPrt.getCoolingInterval(), petPrt.getPetId()));
 			}
-		}
 
-		Pet pet = null;
-		for (String degree : Pet.levelValueMap.keySet()) {
-			pet = lowestPetMap.get(degree);
-			if (pet != null && pet.getAmount() <= (LIMIT_MAP.get(pet.getRareDegree()) - 1)) {
-				return pet;
+			if (petPrt != null && petPrt.getAmount() <= (LIMIT_MAP.get(petPrt.getRareDegree()))) {
+				if (new BigDecimal(petPrt.getAmount()).compareTo(BigDecimal.ZERO) > 0 && petPrt.getAmount() > 0) {
+					pets.add(petPrt);
+				}
 			}
+
 		}
 
-		return null;
+		return pets;
 	}
 
 	/**
@@ -237,6 +240,11 @@ public class PetBuy {
 	 * @return
 	 */
 	public static boolean tryBuy(Pet pet, User user, Boolean isFileLog) {
+
+		if (new BigDecimal(pet.getAmount()).compareTo(BigDecimal.ZERO) <= 0 || pet.getAmount() <= 0) {
+			return false;
+		}
+
 		VerCode verCode = VerCodeTask.getVerCodeInfo(user);
 		if (verCode == null || petCache.contains(pet.getPetId())) {
 			return false;

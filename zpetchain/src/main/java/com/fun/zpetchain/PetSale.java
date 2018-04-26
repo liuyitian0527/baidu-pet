@@ -33,7 +33,7 @@ public class PetSale {
 					List<Pet> pets = PetCenter.getMyPetList(user, true);
 					for (Pet pet : pets) {
 						if (pet.getRareDegree().equals("神话")) {
-//							continue;
+							// continue;
 						}
 						cancleSalePet(pet, user); // 下架
 
@@ -147,8 +147,8 @@ public class PetSale {
 	}
 
 	public static String getSalePetAmount(Pet pet) {
-		if ("2000517460642878904".equals(pet.getPetId())) {
-			return "780000";
+		if ("2000515433418264855".equals(pet.getPetId())) {
+			return "340000";
 		}
 
 		String k = pet.getRareDegree() + "_" + pet.getGeneration() + "_" + pet.getCoolingInterval() + "_" + pet.getRareNum() + "稀";
