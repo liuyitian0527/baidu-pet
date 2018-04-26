@@ -52,7 +52,7 @@ public class PetConstant {
 	 * 最大尝试购买次数
 	 */
 
-	public final static int TYR_COUNT = 40;
+	public final static int TYR_COUNT = 100;
 
 	/**
 	 * 根据售价升序

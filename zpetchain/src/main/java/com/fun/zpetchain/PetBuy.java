@@ -1,5 +1,6 @@
 package com.fun.zpetchain;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -219,14 +220,13 @@ public class PetBuy {
 				System.out.println(String.format(user.getName() + "  %s: 售价:%s, 等级:%s %s, 休息:%s, petId:%s", sortType, petPrt.getAmount(),
 						petPrt.getRareDegree(), petPrt.getGeneration() + "代", petPrt.getCoolingInterval(), petPrt.getPetId()));
 			}
-		}
 
-		Pet pet = null;
-		for (String degree : Pet.levelValueMap.keySet()) {
-			pet = lowestPetMap.get(degree);
-			if (pet != null && pet.getAmount() <= (LIMIT_MAP.get(pet.getRareDegree()))) {
-				pets.add(pet);
+			if (petPrt != null && petPrt.getAmount() <= (LIMIT_MAP.get(petPrt.getRareDegree()))) {
+				if (new BigDecimal(petPrt.getAmount()).compareTo(BigDecimal.ZERO) > 0 && petPrt.getAmount() > 0) {
+					pets.add(petPrt);
+				}
 			}
+
 		}
 
 		return pets;
@@ -240,6 +240,11 @@ public class PetBuy {
 	 * @return
 	 */
 	public static boolean tryBuy(Pet pet, User user, Boolean isFileLog) {
+
+		if (new BigDecimal(pet.getAmount()).compareTo(BigDecimal.ZERO) <= 0 || pet.getAmount() <= 0) {
+			return false;
+		}
+
 		VerCode verCode = VerCodeTask.getVerCodeInfo(user);
 		if (verCode == null || petCache.contains(pet.getPetId())) {
 			return false;

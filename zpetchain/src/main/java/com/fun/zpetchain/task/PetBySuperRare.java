@@ -1,5 +1,6 @@
 package com.fun.zpetchain.task;
 
+import java.math.BigDecimal;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
@@ -86,6 +87,9 @@ public class PetBySuperRare {
 					if (pInfo == null) {
 						continue;
 					}
+					if (new BigDecimal(pInfo.getAmount()).compareTo(BigDecimal.ZERO) <= 0 || pInfo.getAmount() <= 0) {
+						continue;
+					}
 
 					// 大于4天，不考虑
 					String coolingInterval = pInfo.getCoolingInterval();
@@ -100,35 +104,35 @@ public class PetBySuperRare {
 						// 0代
 						if (pInfo.getGeneration() == 0) {
 							if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell() && pInfo.getIsYingTao()) {
-								superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree()) + 100000;
+								superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 100000;
 							} else if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell()) {
-								superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree()) + 20000;
+								superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 20000;
 							} else if (pInfo.getIsWhiteEyes()) {
-								superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree()) + 10000;
+								superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 10000;
 							} else if (pInfo.getIsAngell()) {
-								superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree()) + 7000;
+								superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 7000;
 							} else {
-								superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree()) + PetConstant.SUPER_RARE_RAISE;
+								superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + PetConstant.SUPER_RARE_RAISE;
 							}
 						}
 						// 1代
 						else if (pInfo.getGeneration() == 1) {
 							if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell() && pInfo.getIsYingTao()) {
-								superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree()) + 50000;
+								superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 50000;
 							} else if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell()) {
-								superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree()) + 20000;
+								superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 20000;
 							} else if (pInfo.getIsWhiteEyes()) {
-								superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree()) + 8000;
+								superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 8000;
 							} else if (pInfo.getIsAngell()) {
-								superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree()) + 5000;
+								superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 5000;
 							} else {
-								superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree()) + PetConstant.SUPER_RARE_RAISE;
+								superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + PetConstant.SUPER_RARE_RAISE;
 							}
 						} else {
 							continue;
 						}
 
-						if (pet.getAmount() > superAmount) {
+						if (pInfo.getAmount() > superAmount) {
 							continue;
 						}
 
@@ -137,7 +141,7 @@ public class PetBySuperRare {
 						int trycount = 1;
 						while (trycount <= 100) {
 							trycount++;
-							if (PetBuy.tryBuy(pet, user, false)) {
+							if (PetBuy.tryBuy(pInfo, user, false)) {
 								FileUtil.appendTxt(TimeUtil.now(TimeUtil.TARGET_1) + " " + user.getName() + " 【超级稀有】购买成功: " + pInfo + "\n",
 										PathConstant.BUY_PATH);
 								// 线程休息3分钟，等待宠物上链
@@ -161,25 +165,25 @@ public class PetBySuperRare {
 							// 0代
 							if (pInfo.getGeneration() == 0) {
 								if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell() && pInfo.getIsYingTao()) {
-									superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree()) + 50000;
+									superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 50000;
 								} else if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell()) {
-									superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree()) + 8000;
+									superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 8000;
 								} else if (pInfo.getIsWhiteEyes()) {
-									superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree()) + 4000;
+									superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 4000;
 								} else if (pInfo.getIsAngell()) {
-									superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree()) + 1000;
+									superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 1000;
 								}
 							}
 							// 1代
 							else if (pInfo.getGeneration() == 1) {
 								if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell() && pInfo.getIsYingTao()) {
-									superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree()) + 10000;
+									superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 10000;
 								} else if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell()) {
-									superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree()) + 4000;
+									superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 4000;
 								} else if (pInfo.getIsWhiteEyes()) {
-									superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree()) + 2000;
+									superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 2000;
 								} else if (pInfo.getIsAngell()) {
-									superAmount = PetBuy.LIMIT_MAP.get(pet.getRareDegree()) + 500;
+									superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 500;
 								}
 							} else {
 								continue;
@@ -189,7 +193,7 @@ public class PetBySuperRare {
 								int trycount = 1;
 								while (trycount <= 100) {
 									trycount++;
-									if (PetBuy.tryBuy(pet, user, false)) {
+									if (PetBuy.tryBuy(pInfo, user, false)) {
 										FileUtil.appendTxt(TimeUtil.now(TimeUtil.TARGET_1) + " " + user.getName() + " 【天使|白眉】购买成功: " + pInfo + "\n",
 												PathConstant.BUY_PATH);
 										// 线程休息3分钟，等待宠物上链
