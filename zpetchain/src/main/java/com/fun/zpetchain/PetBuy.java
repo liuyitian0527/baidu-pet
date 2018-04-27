@@ -58,7 +58,7 @@ public class PetBuy {
 			// 验证码初始化
 			VerCodeTask.init();
 			// 10分后自动上下架
-			PetSale.saleTask(1000 * 60 * 5, 1000 * 60 * 10);
+			PetSale.saleTask(1000 * 60 * 5, 1000 * 60 * 15);
 		} catch (Exception e) {
 			logger.error("init fail. " + e.getMessage());
 		}
@@ -261,7 +261,8 @@ public class PetBuy {
 		String data = JSONObject.toJSONString(paraMap);
 
 		try {
-			JSONObject jsonResult = HttpUtil.post(PetConstant.TXN_CREATE, data, user);
+			logger.info("开始购买：{}", pet);
+			JSONObject jsonResult = HttpUtil.post(PetConstant.TXN_CREATE, data, user, pet.getPetId());
 
 			if (jsonResult != null) {
 				logger.info(jsonResult.toString());
