@@ -58,7 +58,7 @@ public class PetBuy {
 			// 验证码初始化
 			VerCodeTask.init();
 			// 10分后自动上下架
-			PetSale.saleTask(1000 * 60 * 5, 1000 * 60 * 15);
+			PetSale.saleTask(1000 * 60 * 5, 1000 * 60 * 10);
 		} catch (Exception e) {
 			logger.error("init fail. " + e.getMessage());
 		}

@@ -85,7 +85,9 @@ public class PetConstant {
 	public final static String CAPTCHA_URL = "https://pet-chain.baidu.com/data/captcha/gen";
 
 	/** 购买 */
-	public final static String TXN_CREATE = "https://pet-chain.baidu.com/data/txn/create";
+	// public final static String TXN_CREATE =
+	// "https://pet-chain.baidu.com/data/txn/create";
+	public final static String TXN_CREATE = "https://pet-chain.baidu.com/data/txn/sale/create";
 
 	/** 我的宠物列表 */
 	public final static String MY_PET_LIST = "https://pet-chain.baidu.com/data/user/pet/list";
@@ -94,7 +96,12 @@ public class PetConstant {
 	public final static String ORDER_LIST = "https://pet-chain.baidu.com/data/user/order/list";
 
 	/** 上架 */
-	public final static String SALE_PET = "https://pet-chain.baidu.com/data/market/salePet";
+//	public final static String SALE_PET = "https://pet-chain.baidu.com/data/market/salePet";
+	public final static String SALE_PET = "https://pet-chain.baidu.com/data/market/sale/shelf/create";
+	
+	/** 密码确认 */
+	public final static String SALE_PET_CONFIRM = "https://pet-chain.baidu.com/data/market/sale/shelf/create";
+	
 
 	/** 下架 */
 	public final static String CANCEL_SALE_PET = "https://pet-chain.baidu.com/data/market/unsalePet";

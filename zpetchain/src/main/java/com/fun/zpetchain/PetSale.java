@@ -19,7 +19,13 @@ public class PetSale {
 	private static Logger logger = Logger.getLogger(PetSale.class);
 
 	public static void main(String[] args) {
-		saleTask(0, 1000000000);
+//		saleTask(0, 1000000000);
+		User user = PetConstant.USERS.get(1);
+		Pet p = new Pet();
+		p.setPetId("1896036299490020746");
+		p.setShelfStatus("0");
+		p.setAmount(200000d);
+		salePet(p, user);
 	}
 
 	public static void saleTask(long delay, long period) {
@@ -89,15 +95,39 @@ public class PetSale {
 				// 接口调用
 				JSONObject result = HttpUtil.post(PetConstant.SALE_PET, params, user);
 				if (PetConstant.SUCCESS.equals(result.getString("errorNo"))) {
-					System.out.println("上架成功: " + pet.getAmount());
+					System.out.println("预上架成功: " + pet.getAmount());
 				} else {
-					System.out.println("上架失败：" + result);
+					System.out.println("预上架失败：" + result);
 				}
+				// 密码确认
+//				String params2 = getSalePetConfirmParams(pet, amount);
+//				JSONObject result2 = HttpUtil.post(PetConstant.SALE_PET_CONFIRM, params2, user);
+//				if (PetConstant.SUCCESS.equals(result2.getString("errorNo"))) {
+//					System.out.println("上架成功: " + pet.getAmount());
+//				} else {
+//					System.out.println("上架失败：" + result);
+//				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
+	}
+
+	private static String getSalePetConfirmParams(Pet pet, String amount) {
+		JSONObject j = new JSONObject();
+
+		j.put("appId", "1");
+		j.put("confirmType", "1");
+		j.put("nounce", "");
+		j.put("s",
+				"b21wMIveo0zHHmDkj20LLYb0NvulYugVs8HPOsKCC+DIpLd2LfkXrb3TF+2H0MIII1iq4kcY1faHtFZDSCTGvG09qTh70pcr01p6EG8nqmzFuXIedwR+kpQCk7+UM3Rrt/e+0f5ePu8jIDwik7bkEDLeCYIXPC+ulDYIB5ZCZCwr2z8KraHwT2BI7JkTY0GzKuvLWY5O0JkUQKd79+pKVIV4tdYCS8qE31wSIEHE67ft7vr3Jdq+BT0oXAbE3ZOkajASfzHrtM4NTELpW6tfFrgvTiLJe0Tx8wo6Y/VTtejWsh8zHLC1gnNouIx0JhCA/Ga7+GfetgSs56twO5TMuw==");
+		j.put("requestId", System.currentTimeMillis());
+		j.put("timeStamp", "");
+		j.put("token", "");
+		j.put("tpl", "");
+
+		return j.toString();
 	}
 
 	public static void cancleSalePet(Pet pet, User user) {
