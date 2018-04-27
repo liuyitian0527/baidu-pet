@@ -21,6 +21,7 @@ import com.fun.zpetchain.model.Pet;
 import com.fun.zpetchain.model.User;
 import com.fun.zpetchain.model.VerCode;
 import com.fun.zpetchain.task.PetBySuperRare;
+import com.fun.zpetchain.task.PetShareBuy;
 import com.fun.zpetchain.task.VerCodeTask;
 import com.fun.zpetchain.util.FileUtil;
 import com.fun.zpetchain.util.HttpUtil;
@@ -45,6 +46,7 @@ public class PetBuy {
 
 	public final static Map<String, Integer> LIMIT_MAP = new HashMap<String, Integer>();
 	public static LinkedHashSet<String> petCache = new LinkedHashSet<String>(10);
+	public static LinkedHashSet<Pet> petShareCacheHashSet = new LinkedHashSet<>(1000);
 
 	/**
 	 * main方法启动购买
@@ -57,8 +59,12 @@ public class PetBuy {
 			PetBuy.initProp();
 			// 验证码初始化
 			VerCodeTask.init();
+
+			// 专属分享缓存
+			PetShareBuy.initBuySharePet();
+
 			// 10分后自动上下架
-			PetSale.saleTask(1000 * 60 * 5, 1000 * 60 * 10);
+			// PetSale.saleTask(1000 * 60 * 5, 1000 * 60 * 15);
 		} catch (Exception e) {
 			logger.error("init fail. " + e.getMessage());
 		}
@@ -157,6 +163,12 @@ public class PetBuy {
 						pet.getPetId());
 				while (true) {
 					if (trycount <= PetConstant.TYR_COUNT) {
+
+						if (petShareCacheHashSet.contains(pet)) {
+							logger.info("专属分享，暂停购买:" + pet);
+							break;
+						}
+
 						trycount++;
 						if (tryBuy(pet, user, true)) {
 							// 线程休息3分钟，等待宠物上链
@@ -256,12 +268,14 @@ public class PetBuy {
 		paraMap.put("seed", verCode.getSeed());
 		paraMap.put("captcha", verCode.getvCode());
 		paraMap.put("petId", pet.getPetId());
-		paraMap.put("validCode", pet.getValidCode());
+		// paraMap.put("validCode", pet.getValidCode());
+		paraMap.put("validCode", "");
 		paraMap.put("amount", pet.getAmount());
 		String data = JSONObject.toJSONString(paraMap);
 
 		try {
-			JSONObject jsonResult = HttpUtil.post(PetConstant.TXN_CREATE, data, user);
+			logger.info("开始购买：{}", pet);
+			JSONObject jsonResult = HttpUtil.post(PetConstant.TXN_CREATE, data, user, pet.getPetId());
 
 			if (jsonResult != null) {
 				logger.info(jsonResult.toString());
@@ -275,12 +289,18 @@ public class PetBuy {
 							pet.getId(), pet.getAmount(), pet.getRareDegree(), pet.getGeneration() + "代", pet.getCoolingInterval());
 
 					addCache(pet);
+					petShareCacheHashSet.remove(pet);
 					if (isFileLog) {
 						FileUtil.appendTxt(str + "\n", PathConstant.BUY_PATH);
 					}
 					return true;
 				} else if ("有人抢先下单啦".equals(errorMsg)) {
 					addCache(pet);
+					petShareCacheHashSet.remove(pet);
+				} else if (errorNo.equals("30010")) { // 专属分享
+					if (!petShareCacheHashSet.contains(pet)) {
+						petShareCacheHashSet.add(pet);
+					}
 				}
 			}
 		} catch (Exception e) {

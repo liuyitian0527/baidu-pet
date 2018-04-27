@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -30,9 +31,31 @@ import com.fun.zpetchain.util.TimeUtil;
  * <p>
  */
 public class PetCenter {
+	private static Logger logger = Logger.getLogger(PetCenter.class);
 
 	public static void main(String[] args) {
-		orderTotal();
+		// orderTotal();
+		for (User u : PetConstant.USERS) {
+			userGet(u);
+			
+//			List<Pet> pets = getMyPetList(u, true);
+//			for (Pet p : pets) {
+//				logger.info(p);
+//			}
+		}
+	}
+
+	public static void userGet(User user) {
+		JSONObject j = new JSONObject();
+		j.put("appId", "1");
+		j.put("nounce", "");
+		j.put("requestId", System.currentTimeMillis());
+		j.put("timeStamp", "");
+		j.put("token", "");
+		j.put("tpl", "");
+		JSONObject obj = HttpUtil.post(PetConstant.USER_GET, j.toString(), user);
+
+		logger.info(obj);
 	}
 
 	/**

@@ -52,7 +52,7 @@ public class PetConstant {
 	 * 最大尝试购买次数
 	 */
 
-	public final static int TYR_COUNT = 100;
+	public final static int TYR_COUNT = 60;
 
 	/**
 	 * 根据售价升序
@@ -78,6 +78,9 @@ public class PetConstant {
 
 	/********************** url 开始 ********************************** *******************************************************/
 
+	/** 个人中心 */
+	public final static String USER_GET = "https://pet-chain.baidu.com/data/user/get";
+
 	/** 市场列表 */
 	public final static String QUERY_PETS_ON_SALE = "https://pet-chain.baidu.com/data/market/queryPetsOnSale";
 
@@ -96,12 +99,11 @@ public class PetConstant {
 	public final static String ORDER_LIST = "https://pet-chain.baidu.com/data/user/order/list";
 
 	/** 上架 */
-//	public final static String SALE_PET = "https://pet-chain.baidu.com/data/market/salePet";
+	// public final static String SALE_PET = "https://pet-chain.baidu.com/data/market/salePet";
 	public final static String SALE_PET = "https://pet-chain.baidu.com/data/market/sale/shelf/create";
-	
+
 	/** 密码确认 */
 	public final static String SALE_PET_CONFIRM = "https://pet-chain.baidu.com/data/market/sale/shelf/create";
-	
 
 	/** 下架 */
 	public final static String CANCEL_SALE_PET = "https://pet-chain.baidu.com/data/market/unsalePet";
