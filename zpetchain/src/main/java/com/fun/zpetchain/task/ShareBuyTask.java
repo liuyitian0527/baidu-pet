@@ -5,17 +5,31 @@ import java.util.TimerTask;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.log4j.Logger;
-
 import com.fun.zpetchain.PetBuy;
+import com.fun.zpetchain.constant.CodeConstant;
 import com.fun.zpetchain.constant.PetConstant;
 import com.fun.zpetchain.model.Pet;
 import com.fun.zpetchain.model.User;
+import com.fun.zpetchain.util.TimeUtil;
 
-public class PetShareBuy {
-	private static Logger logger = Logger.getLogger(PetShareBuy.class);
+/**
+ * 
+ * Title. 专属分享3分钟，购买任务<br>
+ * Description.
+ * <p>
+ * Copyright: Copyright (c) 2018-4-29 上午10:51:03
+ * <p>
+ * Author: liuyt
+ * <p>
+ * Version: 1.0
+ * <p>
+ */
+public class ShareBuyTask {
 	private static final Lock lock = new ReentrantLock();
 
+	/**
+	 * 专属分享购买任务
+	 */
 	public static void initBuySharePet() {
 		Timer timer = new Timer();
 		TimerTask task = new TimerTask() {
@@ -43,16 +57,14 @@ public class PetShareBuy {
 			}
 
 			int trycount = 0;
-			while (trycount <= 30) {
+			Boolean b = true;
+			while (b && trycount <= PetConstant.TYR_COUNT) {
 				trycount++;
-				if (PetBuy.tryBuy(pet, user, false)) {
-					logger.info("专属分享购买成功：" + pet);
-					break;
-				} else {
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-					}
+				String errorNo = PetBuy.tryBuy(pet, user, true);
+				if (PetBuy.buySuccess(errorNo)) {
+					b = false;
+				} else if (CodeConstant.ERROR_30010.equals(errorNo)) {
+					b = false;
 				}
 			}
 		}

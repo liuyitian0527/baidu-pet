@@ -8,6 +8,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import com.fun.zpetchain.PetBuy;
 import com.fun.zpetchain.PetCenter;
+import com.fun.zpetchain.constant.CodeConstant;
 import com.fun.zpetchain.constant.PathConstant;
 import com.fun.zpetchain.constant.PetConstant;
 import com.fun.zpetchain.model.Pet;
@@ -26,7 +27,7 @@ import com.fun.zpetchain.util.TimeUtil;
  * Version: 1.0
  * <p>
  */
-public class PetBySuperRare {
+public class SuperRareBuyTask {
 
 	private static final Lock lock = new ReentrantLock();
 	private static final Lock lock2 = new ReentrantLock();
@@ -78,10 +79,10 @@ public class PetBySuperRare {
 						superPet.clear();
 						System.out.println("超级稀有缓存清理...");
 					}
-					if (superPet.contains(pet.getId())) {
+					if (superPet.contains(pet.getPetId()) || PetBuy.petCache.contains(pet.getPetId())) {
 						continue;
 					}
-					superPet.add(pet.getId());
+					superPet.add(pet.getPetId());
 
 					Pet pInfo = PetCenter.getPetById(pet.getPetId(), user);
 					if (pInfo == null) {
@@ -93,122 +94,98 @@ public class PetBySuperRare {
 
 					// 大于4天，不考虑
 					String coolingInterval = pInfo.getCoolingInterval();
-					if (coolingInterval.indexOf("天") > -1 && Integer.parseInt(coolingInterval.charAt(0) + "") >= 4) {
+					if (coolingInterval.indexOf("天") > -1 && Integer.parseInt(coolingInterval.charAt(0) + "") > 4) {
 						continue;
 					}
 
 					Integer superAmount = 0;
+					String succStr = "【超级稀有】购买成功:";
 
 					// 超级稀有
 					if (pInfo.getRareNum() > 4 && pInfo.getRareNum() % 2 == 1) {
 						// 0代
 						if (pInfo.getGeneration() == 0) {
 							if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell() && pInfo.getIsYingTao()) {
-								superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 100000;
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 100000;
 							} else if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell()) {
-								superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 20000;
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 20000;
 							} else if (pInfo.getIsWhiteEyes()) {
-								superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 10000;
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 10000;
 							} else if (pInfo.getIsAngell()) {
-								superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 7000;
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 7000;
 							} else {
-								superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + PetConstant.SUPER_RARE_RAISE;
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + PetConstant.SUPER_RARE_RAISE;
 							}
 						}
 						// 1代
 						else if (pInfo.getGeneration() == 1) {
 							if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell() && pInfo.getIsYingTao()) {
-								superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 50000;
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 50000;
 							} else if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell()) {
-								superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 20000;
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 20000;
 							} else if (pInfo.getIsWhiteEyes()) {
-								superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 8000;
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 8000;
 							} else if (pInfo.getIsAngell()) {
-								superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 5000;
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 5000;
 							} else {
-								superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + PetConstant.SUPER_RARE_RAISE;
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + PetConstant.SUPER_RARE_RAISE;
 							}
 						} else {
-							continue;
+							superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + PetConstant.SUPER_RARE_RAISE;
 						}
-
-						if (pInfo.getAmount() > superAmount) {
-							continue;
-						}
-
-						FileUtil.appendTxt(TimeUtil.now(TimeUtil.TARGET_1) + " " + user.getName() + " 【超级稀有】尝试购买: " + pInfo + "\n",
-								PathConstant.BUY_PATH);
-						int trycount = 1;
-						while (trycount <= 100) {
-							trycount++;
-							if (PetBuy.tryBuy(pInfo, user, false)) {
-								FileUtil.appendTxt(TimeUtil.now(TimeUtil.TARGET_1) + " " + user.getName() + " 【超级稀有】购买成功: " + pInfo + "\n",
-										PathConstant.BUY_PATH);
-								// 线程休息3分钟，等待宠物上链
-								break;
-							} else {
-								try {
-									Thread.sleep(100);
-								} catch (InterruptedException e) {
-								}
-							}
-						}
+						PetBuy.log(TimeUtil.now(TimeUtil.TARGET_1) + " " + user.getName() + " 【超级稀有】尝试购买: " + pInfo);
 					}
 
 					// 天使、白眉
 					else {
 						if (pInfo.getRareNum() >= 4 && (pInfo.getIsAngell() || pInfo.getIsWhiteEyes() || pInfo.getIsYingTao())) {
-
+							succStr = "【天使白眉】购买成功:";
 							if (!coolingInterval.equals("0分钟")) {
 								continue;
 							}
 							// 0代
 							if (pInfo.getGeneration() == 0) {
 								if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell() && pInfo.getIsYingTao()) {
-									superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 50000;
+									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 50000;
 								} else if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell()) {
-									superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 8000;
+									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 8000;
 								} else if (pInfo.getIsWhiteEyes()) {
-									superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 4000;
+									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 4000;
 								} else if (pInfo.getIsAngell()) {
-									superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 1000;
+									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 1000;
 								}
 							}
 							// 1代
 							else if (pInfo.getGeneration() == 1) {
 								if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell() && pInfo.getIsYingTao()) {
-									superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 10000;
+									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 20000;
 								} else if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell()) {
-									superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 4000;
+									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 4000;
 								} else if (pInfo.getIsWhiteEyes()) {
-									superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 2000;
+									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 1000;
 								} else if (pInfo.getIsAngell()) {
-									superAmount = PetBuy.LIMIT_MAP.get(pInfo.getRareDegree()) + 500;
-								}
-							} else {
-								continue;
-							}
-
-							if (pInfo.getAmount() <= superAmount) {
-								int trycount = 1;
-								while (trycount <= 100) {
-									trycount++;
-									if (PetBuy.tryBuy(pInfo, user, false)) {
-										FileUtil.appendTxt(TimeUtil.now(TimeUtil.TARGET_1) + " " + user.getName() + " 【天使|白眉】购买成功: " + pInfo + "\n",
-												PathConstant.BUY_PATH);
-										// 线程休息3分钟，等待宠物上链
-										break;
-									} else {
-										try {
-											Thread.sleep(100);
-										} catch (InterruptedException e) {
-										}
-									}
+									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 500;
 								}
 							}
 						}
 					}
 
+					if (superAmount == 0 || superAmount < pInfo.getAmount()) {
+						continue;
+					}
+
+					int trycount = 1;
+					Boolean b = true;
+					while (b && trycount <= PetConstant.TYR_COUNT) {
+						trycount++;
+						String errorNo = PetBuy.tryBuy(pInfo, user, false);
+						if (PetBuy.buySuccess(errorNo)) {
+							PetBuy.log(TimeUtil.now(TimeUtil.TARGET_1) + " " + user.getName() + succStr + pInfo);
+							b = false;
+						} else if (CodeConstant.ERROR_30010.equals(errorNo) || PetBuy.petCache.contains(pet.getPetId())) {
+							b = false;
+						}
+					}
 				}
 
 			}
@@ -216,5 +193,4 @@ public class PetBySuperRare {
 		Thread thread = new Thread(runnable);
 		thread.start();
 	}
-
 }

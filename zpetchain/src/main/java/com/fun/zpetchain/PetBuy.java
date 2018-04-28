@@ -6,26 +6,24 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.fun.zpetchain.constant.CodeConstant;
 import com.fun.zpetchain.constant.PathConstant;
 import com.fun.zpetchain.constant.PetConstant;
-import com.fun.zpetchain.enums.PetEnum;
 import com.fun.zpetchain.model.Pet;
 import com.fun.zpetchain.model.User;
 import com.fun.zpetchain.model.VerCode;
-import com.fun.zpetchain.task.PetBySuperRare;
-import com.fun.zpetchain.task.PetShareBuy;
+import com.fun.zpetchain.task.PetBuyTask;
+import com.fun.zpetchain.task.ShareBuyTask;
+import com.fun.zpetchain.task.SuperRareBuyTask;
 import com.fun.zpetchain.task.VerCodeTask;
 import com.fun.zpetchain.util.FileUtil;
 import com.fun.zpetchain.util.HttpUtil;
-import com.fun.zpetchain.util.PropUtil;
 import com.fun.zpetchain.util.TimeUtil;
 
 /**
@@ -41,10 +39,10 @@ import com.fun.zpetchain.util.TimeUtil;
  * <p>
  */
 public class PetBuy {
+	private static final String FAIL = "-1";
 
 	private static final Logger logger = LoggerFactory.getLogger(PetBuy.class);
 
-	public final static Map<String, Integer> LIMIT_MAP = new HashMap<String, Integer>();
 	public static LinkedHashSet<String> petCache = new LinkedHashSet<String>(10);
 	public static LinkedHashSet<Pet> petShareCacheHashSet = new LinkedHashSet<>(1000);
 
@@ -56,58 +54,21 @@ public class PetBuy {
 	public static void main(String[] args) {
 		try {
 			// 配置文件加载
-			PetBuy.initProp();
+			PetConstant.initProp();
 			// 验证码初始化
 			VerCodeTask.init();
 
 			// 专属分享缓存
-			PetShareBuy.initBuySharePet();
+			ShareBuyTask.initBuySharePet();
 
 			// 10分后自动上下架
-			// PetSale.saleTask(1000 * 60 * 5, 1000 * 60 * 15);
+			PetSale.saleTask(1000 * 60 * 5, 1000 * 60 * 15);
+
+			// 间隔刷新市场列表&购买命中
+			PetBuyTask.buyTask();
 		} catch (Exception e) {
 			logger.error("init fail. " + e.getMessage());
 		}
-
-		Timer timer = new Timer();
-		TimerTask task = new TimerTask() {
-			@Override
-			public void run() {
-				try {
-					for (final User user : PetConstant.USERS) {
-						if (user.getName().equalsIgnoreCase("liuyitian")) {
-							// PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_AMT,
-							// PetConstant.FILTER_COND_EPIC, user);
-							if (System.currentTimeMillis() % 2 == 0) {
-								PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_TIME, PetConstant.FILTER_COND_EPIC, user);
-							} else {
-								PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_AMT, PetConstant.FILTER_COND_MYTH, user);
-							}
-						} else {
-							PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_TIME, PetConstant.FILTER_COND_EPIC, user);
-						}
-					}
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-
-		};
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		timer.scheduleAtFixedRate(task, 1000, 350);
-	}
-
-	private static void initProp() throws Exception {
-		LIMIT_MAP.put(PetEnum.LEVEL_COMMON.getDesc(), Integer.parseInt(PropUtil.getProp("price_common")));
-		LIMIT_MAP.put(PetEnum.LEVEL_RARE.getDesc(), Integer.parseInt(PropUtil.getProp("price_rare")));
-		LIMIT_MAP.put(PetEnum.LEVEL_EXCELLENCE.getDesc(), Integer.parseInt(PropUtil.getProp("price_excellence")));
-		LIMIT_MAP.put(PetEnum.LEVEL_EPIC.getDesc(), Integer.parseInt(PropUtil.getProp("price_epic")));
-		LIMIT_MAP.put(PetEnum.LEVEL_MYTH.getDesc(), Integer.parseInt(PropUtil.getProp("price_myth")));
-		LIMIT_MAP.put(PetEnum.LEVEL_LEGEND.getDesc(), Integer.parseInt(PropUtil.getProp("price_legend")));
 
 	}
 
@@ -140,51 +101,56 @@ public class PetBuy {
 
 		JSONObject jsonResult = HttpUtil.post(PetConstant.QUERY_PETS_ON_SALE, data, user);
 
-		if (jsonResult != null && "success".equals(jsonResult.get("errorMsg"))) {
-			List<Pet> petArr = JSONArray.parseArray(jsonResult.getJSONObject("data").getJSONArray("petsOnSale").toString(), Pet.class);
+		if (jsonResult != null && CodeConstant.SUCCESS.equals(jsonResult.get("errorNo"))) {
+			List<Pet> pets = JSONArray.parseArray(jsonResult.getJSONObject("data").getJSONArray("petsOnSale").toString(), Pet.class);
 
 			// 超级稀有购买
 			try {
-				PetBySuperRare.tryBuySuperRare(petArr, user);
+				SuperRareBuyTask.tryBuySuperRare(pets, user);
 			} catch (Exception e) {
 			}
 
 			// 找出命中售价的宠物
-			List<Pet> pets = choosePetFromPetArr(petArr, sortType, user);
-			toBuy(pets, user);
+			List<Pet> hitPets = choosePetFromPetArr(pets, sortType, user);
+			hitPetsToBuy(hitPets, user);
 		}
 	}
 
-	public static void toBuy(List<Pet> pets, User user) throws InterruptedException {
+	/**
+	 * 购买市场命中的宠物列表
+	 * 
+	 * @param pets
+	 * @param user
+	 * @throws InterruptedException
+	 */
+	public static void hitPetsToBuy(List<Pet> pets, User user) throws InterruptedException {
 		for (Pet pet : pets) {
-			if (pet != null && !petCache.contains(pet.getPetId())) {
-				int trycount = 1;
+			if (!petCache.contains(pet.getPetId())) {
+				if (isShare(pet)) {
+					logger.info("专属分享3分钟，跳过购买:" + pet);
+					continue;
+				}
+
 				logger.info(user.getName() + " 尝试购买 售价:{}, 等级:{}, 休息:{}, petId:{}", pet.getAmount(), pet.getRareDegree(), pet.getCoolingInterval(),
 						pet.getPetId());
-				while (true) {
+
+				int trycount = 0;
+				Boolean b = true;
+				while (b) {
+					trycount++;
 					if (trycount <= PetConstant.TYR_COUNT) {
-
-						if (petShareCacheHashSet.contains(pet)) {
-							logger.info("专属分享，暂停购买:" + pet);
-							break;
+						String errorNo = tryBuy(pet, user, true);
+						if (buySuccess(errorNo)) {
+							b = false;
+							Thread.sleep(1000 * 60 * 2); // 线程休息2分钟，等待宠物上链
+						} else if (CodeConstant.ERROR_30010.equals(errorNo)) {
+							b = false;
 						}
 
-						trycount++;
-						if (tryBuy(pet, user, true)) {
-							// 线程休息3分钟，等待宠物上链
-							Thread.sleep(1000 * 60 * 3);
-							break;
-						} else {
-							try {
-								Thread.sleep(200);
-							} catch (InterruptedException e) {
-							}
-							continue;
-						}
 					} else {
+						b = false;
 						addCache(pet);
-						logger.info("忽略宠物：" + pet);
-						break;
+						logger.info("超出购买次数，忽略宠物：" + pet);
 					}
 				}
 			}
@@ -233,12 +199,15 @@ public class PetBuy {
 						petPrt.getRareDegree(), petPrt.getGeneration() + "代", petPrt.getCoolingInterval(), petPrt.getPetId()));
 			}
 
-			if (petPrt != null && petPrt.getAmount() <= (LIMIT_MAP.get(petPrt.getRareDegree()))) {
-				if (new BigDecimal(petPrt.getAmount()).compareTo(BigDecimal.ZERO) > 0 && petPrt.getAmount() > 0) {
+			if (new BigDecimal(petPrt.getAmount()).compareTo(BigDecimal.ZERO) <= 0 || petPrt.getAmount() <= 0) {
+				addCache(petPrt);
+			}
+
+			if (petPrt != null && petPrt.getAmount() <= (PetConstant.LIMIT_MAP.get(petPrt.getRareDegree()))) {
+				if (!petCache.contains(petPrt.getPetId())) {
 					pets.add(petPrt);
 				}
 			}
-
 		}
 
 		return pets;
@@ -251,16 +220,17 @@ public class PetBuy {
 	 * @param user
 	 * @return
 	 */
-	public static boolean tryBuy(Pet pet, User user, Boolean isFileLog) {
+	public static String tryBuy(Pet pet, User user, Boolean isFileLog) {
 
 		if (new BigDecimal(pet.getAmount()).compareTo(BigDecimal.ZERO) <= 0 || pet.getAmount() <= 0) {
-			return false;
+			return FAIL;
 		}
 
 		VerCode verCode = VerCodeTask.getVerCodeInfo(user);
 		if (verCode == null || petCache.contains(pet.getPetId())) {
-			return false;
+			return FAIL;
 		}
+
 		Map<String, Object> paraMap = new HashMap<String, Object>(16);
 		paraMap.put("appId", 1);
 		paraMap.put("tpl", "");
@@ -282,39 +252,83 @@ public class PetBuy {
 			}
 
 			if (jsonResult != null) {
-				String errorMsg = jsonResult.getString("errorMsg");
 				String errorNo = jsonResult.getString("errorNo");
-				if (errorNo.equals("00")) {
-					String str = String.format(TimeUtil.now(TimeUtil.TARGET_1) + " " + user.getName() + " 购买成功！ petId:%s, 售价：%s, 等级:%s %s, 休息时间：%s ",
-							pet.getId(), pet.getAmount(), pet.getRareDegree(), pet.getGeneration() + "代", pet.getCoolingInterval());
-
+				if (errorNo.equals(CodeConstant.SUCCESS)) {
 					addCache(pet);
 					petShareCacheHashSet.remove(pet);
 					if (isFileLog) {
-						FileUtil.appendTxt(str + "\n", PathConstant.BUY_PATH);
+						logSuccessBuy(pet, user);
 					}
-					return true;
-				} else if ("有人抢先下单啦".equals(errorMsg)) {
+				} else if (errorNo.equals(CodeConstant.ERROR_10002)) { // 抢先下单
 					addCache(pet);
 					petShareCacheHashSet.remove(pet);
-				} else if (errorNo.equals("30010")) { // 专属分享
+				} else if (errorNo.equals(CodeConstant.ERROR_30010)) { // 专属分享
 					if (!petShareCacheHashSet.contains(pet)) {
 						petShareCacheHashSet.add(pet);
 					}
 				}
+
+				return errorNo;
 			}
 		} catch (Exception e) {
 			System.out.println(user.getName() + " 购买 error:" + e.getMessage());
+		} finally {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 
-		return false;
+		return FAIL;
 	}
 
+	/**
+	 * 忽略的市场宠物
+	 * 
+	 * @param pet
+	 */
 	private static void addCache(Pet pet) {
-		if (petCache.size() >= 10) {
+		if (petCache.size() >= 100) {
 			petCache.clear();
 			petCache.add(pet.getPetId());
 		}
+	}
+
+	/**
+	 * 判断是否专属分享缓存
+	 * 
+	 * @param pet
+	 * @return
+	 */
+	public static Boolean isShare(Pet pet) {
+		if (petShareCacheHashSet.contains(pet)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 根据返回code判断是否购买成功
+	 * 
+	 * @param errorNo
+	 * @return
+	 */
+	public static Boolean buySuccess(String errorNo) {
+		if (CodeConstant.SUCCESS.equals(errorNo)) {
+			return true;
+		}
+		return false;
+	}
+
+	public static void logSuccessBuy(Pet pet, User user) {
+		String str = String.format(TimeUtil.now(TimeUtil.TARGET_1) + " " + user.getName() + " 购买成功！ petId:%s, 售价：%s, 等级:%s %s, 休息时间：%s ",
+				pet.getId(), pet.getAmount(), pet.getRareDegree(), pet.getGeneration() + "代", pet.getCoolingInterval());
+		FileUtil.appendTxt(str + "\n", PathConstant.BUY_PATH);
+	}
+
+	public static void log(String s) {
+		FileUtil.appendTxt(s + "\n", PathConstant.BUY_PATH);
 	}
 
 }

@@ -1,11 +1,14 @@
 package com.fun.zpetchain.constant;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.fun.zpetchain.enums.PetEnum;
 import com.fun.zpetchain.model.User;
 import com.fun.zpetchain.util.FileUtil;
 import com.fun.zpetchain.util.PropUtil;
@@ -23,6 +26,7 @@ import com.fun.zpetchain.util.PropUtil;
  * <p>
  */
 public class PetConstant {
+	public final static Map<String, Integer> LIMIT_MAP = new HashMap<String, Integer>();
 	/**
 	 * 接口成功标识
 	 */
@@ -32,6 +36,11 @@ public class PetConstant {
 	 * 分页大小
 	 */
 	public final static int PAGE_SIZE = 20;
+
+	/**
+	 * 市场列表刷新时间
+	 */
+	public final static int BUY_INTERVAL = 300;
 
 	/**
 	 * 请求超时时间（毫秒）
@@ -52,7 +61,7 @@ public class PetConstant {
 	 * 最大尝试购买次数
 	 */
 
-	public final static int TYR_COUNT = 60;
+	public final static int TYR_COUNT = 50;
 
 	/**
 	 * 根据售价升序
@@ -99,7 +108,8 @@ public class PetConstant {
 	public final static String ORDER_LIST = "https://pet-chain.baidu.com/data/user/order/list";
 
 	/** 上架 */
-	// public final static String SALE_PET = "https://pet-chain.baidu.com/data/market/salePet";
+	// public final static String SALE_PET =
+	// "https://pet-chain.baidu.com/data/market/salePet";
 	public final static String SALE_PET = "https://pet-chain.baidu.com/data/market/sale/shelf/create";
 
 	/** 密码确认 */
@@ -124,7 +134,7 @@ public class PetConstant {
 	/**
 	 * 白眉斗眼卖出加价金额
 	 */
-	public final static Integer WHITE_EYES = 7000;
+	public final static Integer WHITE_EYES = 6000;
 
 	/**
 	 * 超级稀有买入加价
@@ -135,7 +145,7 @@ public class PetConstant {
 
 	static {
 		// key = 史诗_1代_2天_4稀
-		SALE_AMOUNT.put("史诗_0_0分钟_4稀", 7400);
+		SALE_AMOUNT.put("史诗_0_0分钟_4稀", 6800);
 		SALE_AMOUNT.put("史诗_0_24小时_4稀", 5500);
 		SALE_AMOUNT.put("史诗_0_2天_4稀", 5200);
 		SALE_AMOUNT.put("史诗_0_4天_4稀", 4800);
@@ -196,6 +206,21 @@ public class PetConstant {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * 初始化购买金额
+	 * 
+	 * @throws Exception
+	 */
+	public static void initProp() throws Exception {
+		LIMIT_MAP.put(PetEnum.LEVEL_COMMON.getDesc(), Integer.parseInt(PropUtil.getProp("price_common")));
+		LIMIT_MAP.put(PetEnum.LEVEL_RARE.getDesc(), Integer.parseInt(PropUtil.getProp("price_rare")));
+		LIMIT_MAP.put(PetEnum.LEVEL_EXCELLENCE.getDesc(), Integer.parseInt(PropUtil.getProp("price_excellence")));
+		LIMIT_MAP.put(PetEnum.LEVEL_EPIC.getDesc(), Integer.parseInt(PropUtil.getProp("price_epic")));
+		LIMIT_MAP.put(PetEnum.LEVEL_MYTH.getDesc(), Integer.parseInt(PropUtil.getProp("price_myth")));
+		LIMIT_MAP.put(PetEnum.LEVEL_LEGEND.getDesc(), Integer.parseInt(PropUtil.getProp("price_legend")));
+
 	}
 
 }
