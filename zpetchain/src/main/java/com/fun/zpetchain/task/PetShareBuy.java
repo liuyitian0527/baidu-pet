@@ -45,7 +45,7 @@ public class PetShareBuy {
 			int trycount = 0;
 			while (trycount <= 30) {
 				trycount++;
-				if (PetBuy.tryBuy(pet, user, false)) {
+				if (PetBuy.tryBuy(pet, user, true)) {
 					logger.info("专属分享购买成功：" + pet);
 					break;
 				} else {

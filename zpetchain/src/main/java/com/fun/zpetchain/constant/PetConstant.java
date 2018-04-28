@@ -99,7 +99,8 @@ public class PetConstant {
 	public final static String ORDER_LIST = "https://pet-chain.baidu.com/data/user/order/list";
 
 	/** 上架 */
-	// public final static String SALE_PET = "https://pet-chain.baidu.com/data/market/salePet";
+	// public final static String SALE_PET =
+	// "https://pet-chain.baidu.com/data/market/salePet";
 	public final static String SALE_PET = "https://pet-chain.baidu.com/data/market/sale/shelf/create";
 
 	/** 密码确认 */
@@ -124,7 +125,7 @@ public class PetConstant {
 	/**
 	 * 白眉斗眼卖出加价金额
 	 */
-	public final static Integer WHITE_EYES = 7000;
+	public final static Integer WHITE_EYES = 6000;
 
 	/**
 	 * 超级稀有买入加价
@@ -135,7 +136,7 @@ public class PetConstant {
 
 	static {
 		// key = 史诗_1代_2天_4稀
-		SALE_AMOUNT.put("史诗_0_0分钟_4稀", 7400);
+		SALE_AMOUNT.put("史诗_0_0分钟_4稀", 6800);
 		SALE_AMOUNT.put("史诗_0_24小时_4稀", 5500);
 		SALE_AMOUNT.put("史诗_0_2天_4稀", 5200);
 		SALE_AMOUNT.put("史诗_0_4天_4稀", 4800);
