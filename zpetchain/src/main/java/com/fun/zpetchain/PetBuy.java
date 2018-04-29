@@ -62,7 +62,7 @@ public class PetBuy {
 			ShareBuyTask.initBuySharePet();
 
 			// 10分后自动上下架
-			PetSale.saleTask(1000 * 60 * 5, 1000 * 60 * 15);
+//			PetSale.saleTask(1000 * 60 * 5, 1000 * 60 * 15);
 
 			// 间隔刷新市场列表&购买命中
 			PetBuyTask.buyTask();
@@ -194,18 +194,21 @@ public class PetBuy {
 
 		for (String degree : Pet.levelValueMap.keySet()) {
 			Pet petPrt = lowestPetMap.get(degree);
-			if (petPrt != null && System.currentTimeMillis() % 5 == 0) {
+			if (petPrt == null) {
+				continue;
+			}
+			if (System.currentTimeMillis() % 5 == 0) {
 				System.out.println(String.format(user.getName() + "  %s: 售价:%s, 等级:%s %s, 休息:%s, petId:%s", sortType, petPrt.getAmount(),
 						petPrt.getRareDegree(), petPrt.getGeneration() + "代", petPrt.getCoolingInterval(), petPrt.getPetId()));
 			}
 
 			if (new BigDecimal(petPrt.getAmount()).compareTo(BigDecimal.ZERO) <= 0 || petPrt.getAmount() <= 0) {
 				addCache(petPrt);
-			}
-
-			if (petPrt != null && petPrt.getAmount() <= (PetConstant.LIMIT_MAP.get(petPrt.getRareDegree()))) {
-				if (!petCache.contains(petPrt.getPetId())) {
-					pets.add(petPrt);
+			} else {
+				if (petPrt.getAmount() <= (PetConstant.LIMIT_MAP.get(petPrt.getRareDegree()))) {
+					if (!petCache.contains(petPrt.getPetId())) {
+						pets.add(petPrt);
+					}
 				}
 			}
 		}
