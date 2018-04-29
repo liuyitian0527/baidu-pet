@@ -10,7 +10,6 @@ import com.fun.zpetchain.constant.CodeConstant;
 import com.fun.zpetchain.constant.PetConstant;
 import com.fun.zpetchain.model.Pet;
 import com.fun.zpetchain.model.User;
-import com.fun.zpetchain.util.TimeUtil;
 
 /**
  * 
