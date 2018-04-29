@@ -60,9 +60,10 @@ public class ShareBuyTask {
 			Boolean b = true;
 			while (b && trycount <= PetConstant.TYR_COUNT) {
 				trycount++;
-				String errorNo = PetBuy.tryBuy(pet, user, true);
+				String errorNo = PetBuy.tryBuy(pet, user, false);
 				if (PetBuy.buySuccess(errorNo)) {
 					b = false;
+					PetBuy.log(TimeUtil.now(TimeUtil.TARGET_1) + " " + user.getName() + "【专属分享】购买成功:" + pet);
 				} else if (CodeConstant.ERROR_30010.equals(errorNo)) {
 					b = false;
 				}

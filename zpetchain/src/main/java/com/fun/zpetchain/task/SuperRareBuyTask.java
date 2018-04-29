@@ -100,9 +100,11 @@ public class SuperRareBuyTask {
 
 					Integer superAmount = 0;
 					String succStr = "【超级稀有】购买成功:";
+					Boolean isSupper = false;
 
 					// 超级稀有
 					if (pInfo.getRareNum() > 4 && pInfo.getRareNum() % 2 == 1) {
+						isSupper = true;
 						// 0代
 						if (pInfo.getGeneration() == 0) {
 							if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell() && pInfo.getIsYingTao()) {
@@ -133,7 +135,6 @@ public class SuperRareBuyTask {
 						} else {
 							superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + PetConstant.SUPER_RARE_RAISE;
 						}
-						PetBuy.log(TimeUtil.now(TimeUtil.TARGET_1) + " " + user.getName() + " 【超级稀有】尝试购买: " + pInfo);
 					}
 
 					// 天使、白眉
@@ -172,6 +173,10 @@ public class SuperRareBuyTask {
 
 					if (superAmount == 0 || superAmount < pInfo.getAmount()) {
 						continue;
+					}
+
+					if (isSupper) {
+						PetBuy.log(TimeUtil.now(TimeUtil.TARGET_1) + " " + user.getName() + " 【超级稀有】尝试购买: " + pInfo);
 					}
 
 					int trycount = 1;
