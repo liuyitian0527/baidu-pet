@@ -44,11 +44,6 @@ public class PetBuyTask {
 			}
 
 		};
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		timer.scheduleAtFixedRate(task, 1000, PetConstant.BUY_INTERVAL);
 	}
 

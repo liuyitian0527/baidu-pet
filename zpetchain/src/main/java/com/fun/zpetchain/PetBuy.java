@@ -62,7 +62,7 @@ public class PetBuy {
 			ShareBuyTask.initBuySharePet();
 
 			// 10分后自动上下架
-//			PetSale.saleTask(1000 * 60 * 5, 1000 * 60 * 15);
+			PetSale.saleTask(1000 * 60 * 5, 1000 * 60 * 15);
 
 			// 间隔刷新市场列表&购买命中
 			PetBuyTask.buyTask();
