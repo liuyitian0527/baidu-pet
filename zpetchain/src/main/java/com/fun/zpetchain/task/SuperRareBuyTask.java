@@ -84,10 +84,12 @@ public class SuperRareBuyTask {
 					}
 					superPet.add(pet.getPetId());
 
+					PetBuy.isAppendOpen(user);
 					Pet pInfo = PetCenter.getPetById(pet.getPetId(), user);
 					if (pInfo == null) {
 						continue;
 					}
+					pInfo.setValidCode(pet.getValidCode());
 					if (new BigDecimal(pInfo.getAmount()).compareTo(BigDecimal.ZERO) <= 0 || pInfo.getAmount() <= 0) {
 						continue;
 					}

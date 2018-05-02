@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fun.zpetchain.constant.PetConstant;
+import com.fun.zpetchain.model.Pet;
 import com.fun.zpetchain.model.User;
 import com.fun.zpetchain.model.VerCode;
 import com.fun.zpetchain.util.HttpUtil;
@@ -135,6 +136,55 @@ public class VerCodeTask {
 		paraMap.put("token", null);
 
 		JSONObject jsonResult = HttpUtil.post(PetConstant.CAPTCHA_URL, JSONObject.toJSONString(paraMap).toString(), user);
+
+		try {
+			if (jsonResult == null || !jsonResult.getString("errorNo").equals(PetConstant.SUCCESS)) {
+				System.out.println("验证码返回：" + jsonResult.getString("errorMsg"));
+				return null;
+			}
+			String imgData = jsonResult.getJSONObject("data").get("img").toString();
+			String seed = jsonResult.getJSONObject("data").get("seed").toString();
+			InputStream is = new ByteArrayInputStream(Base64.getDecoder().decode(imgData));
+			BufferedImage image = ImageIO.read(is);
+
+			String vCode = OcrUtil.ocrByTess4j(image);
+			if (StringUtils.isNotEmpty(vCode) && vCode.length() > 4) {
+				vCode = vCode.substring(vCode.length() - 4);
+			}
+			if (StringUtils.isNotEmpty(vCode) && vCode.length() == 3) {
+				vCode = "G" + vCode;
+			}
+
+			if (StringUtils.isNotEmpty(vCode) && vCode.length() == 4) {
+				code.setSeed(seed);
+				code.setvCode(vCode);
+				code.setCreateTime(System.currentTimeMillis());
+
+				return code;
+			} else {
+				logger.info("ocr captcha error [" + vCode + "]");
+			}
+			is.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("验证码解析失败：" + e.getMessage());
+		} finally {
+		}
+		return null;
+	}
+
+	public static VerCode getVerCode(User user, Pet pet) {
+		VerCode code = new VerCode();
+
+		Map<String, Object> paraMap = new HashMap<String, Object>(8);
+		paraMap.put("appId", 1);
+		paraMap.put("requestId", String.valueOf(System.currentTimeMillis()));
+		paraMap.put("tpl", "");
+		paraMap.put("nounce", null);
+		paraMap.put("timeStamp", null);
+		paraMap.put("token", null);
+
+		JSONObject jsonResult = HttpUtil.post(PetConstant.CAPTCHA_URL, JSONObject.toJSONString(paraMap).toString(), user, pet);
 
 		try {
 			if (jsonResult == null || !jsonResult.getString("errorNo").equals(PetConstant.SUCCESS)) {

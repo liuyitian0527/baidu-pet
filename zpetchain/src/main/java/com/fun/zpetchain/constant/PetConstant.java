@@ -117,6 +117,8 @@ public class PetConstant {
 
 	/** 下架 */
 	public final static String CANCEL_SALE_PET = "https://pet-chain.baidu.com/data/market/unsalePet";
+	
+	public final static String IS_APPEND_OPEN = "https://pet-chain.baidu.com/data/pet/isAppendOpen";
 
 	/** 获取宠物信息 */
 	public final static String GET_PET_BY_ID = "https://pet-chain.baidu.com/data/pet/queryPetById";

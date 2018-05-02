@@ -46,7 +46,7 @@ public class OcrUtil {
 			setBorder(img);
 			imgFilter(img);
 			binarization(img, 175);
-			
+
 			File ff = new File(fileName);
 			ImageIO.write(img, "jpg", ff);
 
@@ -83,12 +83,12 @@ public class OcrUtil {
 	 */
 	public static String ocrByTess4j(BufferedImage img) {
 		String result = "";
-		ITesseract tess = new Tesseract();
-		String dataPath = System.getProperty("user.dir") + "\\";
-		tess.setDatapath(dataPath);
-		tess.setLanguage("my2");
-
 		try {
+			ITesseract tess = new Tesseract();
+			String dataPath = System.getProperty("user.dir") + "\\";
+			tess.setDatapath(dataPath);
+			tess.setLanguage("my2");
+
 			setBorder(img);
 			imgFilter(img);
 			binarization(img, 175);
