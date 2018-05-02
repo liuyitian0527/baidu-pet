@@ -56,13 +56,13 @@ public class PetBuy {
 			// 配置文件加载
 			PetConstant.initProp();
 			// 验证码初始化
-			VerCodeTask.init();
+			// VerCodeTask.init();
 
 			// 专属分享缓存
 			ShareBuyTask.initBuySharePet();
 
 			// 10分后自动上下架
-			PetSale.saleTask(1000 * 60 * 5, 1000 * 60 * 15);
+			// PetSale.saleTask(1000 * 60 * 5, 1000 * 60 * 15);
 
 			// 间隔刷新市场列表&购买命中
 			PetBuyTask.buyTask();
@@ -229,26 +229,31 @@ public class PetBuy {
 			return FAIL;
 		}
 
-		VerCode verCode = VerCodeTask.getVerCodeInfo(user);
+		// VerCode verCode = VerCodeTask.getVerCodeInfo(user);
+		VerCode verCode = VerCodeTask.getVerCode(user, pet);
 		if (verCode == null || petCache.contains(pet.getPetId())) {
+			logger.error("验证码获取失败！");
 			return FAIL;
 		}
 
 		Map<String, Object> paraMap = new HashMap<String, Object>(16);
 		paraMap.put("appId", 1);
 		paraMap.put("tpl", "");
+		paraMap.put("nounce", "");
+		paraMap.put("timeStamp", "");
+		paraMap.put("token", "");
 		paraMap.put("requestId", System.currentTimeMillis());
 		paraMap.put("seed", verCode.getSeed());
 		paraMap.put("captcha", verCode.getvCode());
 		paraMap.put("petId", pet.getPetId());
-		// paraMap.put("validCode", pet.getValidCode());
-		paraMap.put("validCode", "");
+		paraMap.put("validCode", pet.getValidCode());
+		// paraMap.put("validCode", "");
 		paraMap.put("amount", pet.getAmount());
 		String data = JSONObject.toJSONString(paraMap);
 
 		try {
 			logger.info("开始购买：{}", pet);
-			JSONObject jsonResult = HttpUtil.post(PetConstant.TXN_CREATE, data, user, pet.getPetId());
+			JSONObject jsonResult = HttpUtil.post(PetConstant.TXN_CREATE, data, user, pet);
 
 			if (jsonResult != null) {
 				logger.info(jsonResult.toString());
@@ -284,6 +289,24 @@ public class PetBuy {
 		}
 
 		return FAIL;
+	}
+
+	public static void isAppendOpen(User user) {
+		Map<String, Object> paraMap = new HashMap<String, Object>(16);
+		paraMap.put("appId", 1);
+		paraMap.put("tpl", "");
+		paraMap.put("nounce", "");
+		paraMap.put("timeStamp", "");
+		paraMap.put("token", "");
+		paraMap.put("requestId", System.currentTimeMillis());
+		String data = JSONObject.toJSONString(paraMap);
+
+		JSONObject jsonResult = HttpUtil.post(PetConstant.IS_APPEND_OPEN, data, user);
+
+		if (jsonResult != null) {
+//			logger.info("isAppendOpen返回=" + jsonResult.toString());
+		}
+
 	}
 
 	/**

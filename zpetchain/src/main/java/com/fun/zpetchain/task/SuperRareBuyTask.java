@@ -84,17 +84,19 @@ public class SuperRareBuyTask {
 					}
 					superPet.add(pet.getPetId());
 
+					PetBuy.isAppendOpen(user);
 					Pet pInfo = PetCenter.getPetById(pet.getPetId(), user);
 					if (pInfo == null) {
 						continue;
 					}
+					pInfo.setValidCode(pet.getValidCode());
 					if (new BigDecimal(pInfo.getAmount()).compareTo(BigDecimal.ZERO) <= 0 || pInfo.getAmount() <= 0) {
 						continue;
 					}
 
 					// 大于4天，不考虑
 					String coolingInterval = pInfo.getCoolingInterval();
-					if (coolingInterval.indexOf("天") > -1 && Integer.parseInt(coolingInterval.charAt(0) + "") > 4) {
+					if (coolingInterval.indexOf("天") > -1 && Integer.parseInt(coolingInterval.replaceAll("天", "")) > 4) {
 						continue;
 					}
 
