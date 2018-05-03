@@ -156,6 +156,8 @@ public class SuperRareBuyTask {
 									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 4000;
 								} else if (pInfo.getIsAngell()) {
 									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 1000;
+								} else {
+									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree());
 								}
 							}
 							// 1代
@@ -168,7 +170,11 @@ public class SuperRareBuyTask {
 									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 1000;
 								} else if (pInfo.getIsAngell()) {
 									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 500;
+								} else {
+									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree());
 								}
+							} else {
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 800;
 							}
 						}
 					}
