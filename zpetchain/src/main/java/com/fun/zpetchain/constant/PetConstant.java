@@ -141,7 +141,7 @@ public class PetConstant {
 	/**
 	 * 超级稀有买入加价
 	 */
-	public final static Integer SUPER_RARE_RAISE = 4000;
+	public final static Integer SUPER_RARE_RAISE = 7000;
 
 	public final static LinkedHashMap<String, Integer> SALE_AMOUNT = new LinkedHashMap<String, Integer>();
 
