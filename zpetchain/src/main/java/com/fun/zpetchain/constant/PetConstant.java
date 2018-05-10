@@ -131,26 +131,26 @@ public class PetConstant {
 	/**
 	 * 天使卖出加价金额
 	 */
-	public final static Integer ANGEL_RAISE = 5000;
+	public final static Integer ANGEL_RAISE = 7000;
 
 	/**
 	 * 白眉斗眼卖出加价金额
 	 */
-	public final static Integer WHITE_EYES = 10000;
+	public final static Integer WHITE_EYES = 18000;
 
 	/**
 	 * 超级稀有买入加价
 	 */
-	public final static Integer SUPER_RARE_RAISE = 4000;
+	public final static Integer SUPER_RARE_RAISE = 8000;
 
 	public final static LinkedHashMap<String, Integer> SALE_AMOUNT = new LinkedHashMap<String, Integer>();
 
 	static {
 		// key = 史诗_1代_2天_4稀
-		SALE_AMOUNT.put("史诗_0_0分钟_4稀", 6800);
-		SALE_AMOUNT.put("史诗_0_24小时_4稀", 5500);
-		SALE_AMOUNT.put("史诗_0_2天_4稀", 5200);
-		SALE_AMOUNT.put("史诗_0_4天_4稀", 4800);
+		SALE_AMOUNT.put("史诗_0_0分钟_4稀", 7800);
+		SALE_AMOUNT.put("史诗_0_24小时_4稀", 6500);
+		SALE_AMOUNT.put("史诗_0_2天_4稀", 6200);
+		SALE_AMOUNT.put("史诗_0_4天_4稀", 5800);
 
 		SALE_AMOUNT.put("史诗_1_0分钟_4稀", 4800);
 		SALE_AMOUNT.put("史诗_1_24小时_4稀", 4600);
@@ -162,23 +162,23 @@ public class PetConstant {
 		SALE_AMOUNT.put("史诗_2_2天_4稀", 4400);
 		SALE_AMOUNT.put("史诗_2_4天_4稀", 4100);
 
-		SALE_AMOUNT.put("史诗_0_0分钟_5稀", 33000);
-		SALE_AMOUNT.put("史诗_0_24小时_5稀", 30000);
-		SALE_AMOUNT.put("史诗_0_2天_5稀", 27000);
-		SALE_AMOUNT.put("史诗_0_4天_5稀", 25000);
+		SALE_AMOUNT.put("史诗_0_0分钟_5稀", 43000);
+		SALE_AMOUNT.put("史诗_0_24小时_5稀", 38000);
+		SALE_AMOUNT.put("史诗_0_2天_5稀", 35000);
+		SALE_AMOUNT.put("史诗_0_4天_5稀", 32000);
 
-		SALE_AMOUNT.put("史诗_1_0分钟_5稀", 22000);
-		SALE_AMOUNT.put("史诗_1_24小时_5稀", 20000);
-		SALE_AMOUNT.put("史诗_1_2天_5稀", 19000);
-		SALE_AMOUNT.put("史诗_1_4天_5稀", 18000);
+		SALE_AMOUNT.put("史诗_1_0分钟_5稀", 28000);
+		SALE_AMOUNT.put("史诗_1_24小时_5稀", 27000);
+		SALE_AMOUNT.put("史诗_1_2天_5稀", 26000);
+		SALE_AMOUNT.put("史诗_1_4天_5稀", 24000);
 
-		SALE_AMOUNT.put("史诗_2_0分钟_5稀", 22000);
-		SALE_AMOUNT.put("史诗_2_24小时_5稀", 20000);
-		SALE_AMOUNT.put("史诗_2_2天_5稀", 19000);
-		SALE_AMOUNT.put("史诗_2_4天_5稀", 18000);
+		SALE_AMOUNT.put("史诗_2_0分钟_5稀", 23000);
+		SALE_AMOUNT.put("史诗_2_24小时_5稀", 22000);
+		SALE_AMOUNT.put("史诗_2_2天_5稀", 20000);
+		SALE_AMOUNT.put("史诗_2_4天_5稀", 19000);
 
 		SALE_AMOUNT.put("史诗_3_0分钟_4稀", 6400);
-		SALE_AMOUNT.put("史诗_3_0分钟_5稀", 22000);
+		SALE_AMOUNT.put("史诗_3_0分钟_5稀", 23000);
 		SALE_AMOUNT.put("史诗_3_6天_5稀", 14000);
 	}
 

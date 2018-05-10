@@ -34,9 +34,9 @@ public class PetCenter {
 	private static Logger logger = Logger.getLogger(PetCenter.class);
 
 	public static void main(String[] args) {
-		// orderTotal();
+		 orderTotal();
 		for (User u : PetConstant.USERS) {
-			userGet(u);
+//			userGet(u);
 			
 //			List<Pet> pets = getMyPetList(u, true);
 //			for (Pet p : pets) {

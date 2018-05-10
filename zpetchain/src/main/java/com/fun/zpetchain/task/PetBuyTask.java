@@ -28,8 +28,8 @@ public class PetBuyTask {
 			public void run() {
 				try {
 					for (final User user : PetConstant.USERS) {
-						if (user.getName().equalsIgnoreCase("liuyitian")) {
-							if (System.currentTimeMillis() % 2 == 0) {
+						if (user.getName().equalsIgnoreCase("zhangyu")) {
+							if (System.currentTimeMillis() % 1 == 0) {
 								PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_TIME, PetConstant.FILTER_COND_EPIC, user);
 							} else {
 								PetBuy.queryPetsOnSale(PetConstant.SORT_TYPE_AMT, PetConstant.FILTER_COND_MYTH, user);

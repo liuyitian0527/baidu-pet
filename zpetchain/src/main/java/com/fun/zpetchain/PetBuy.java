@@ -56,13 +56,13 @@ public class PetBuy {
 			// 配置文件加载
 			PetConstant.initProp();
 			// 验证码初始化
-			// VerCodeTask.init();
+			VerCodeTask.init();
 
 			// 专属分享缓存
-			ShareBuyTask.initBuySharePet();
+			// ShareBuyTask.initBuySharePet();
 
 			// 10分后自动上下架
-			// PetSale.saleTask(1000 * 60 * 5, 1000 * 60 * 15);
+			 PetSale.saleTask(1000 * 60 * 5, 1000 * 60 * 15);
 
 			// 间隔刷新市场列表&购买命中
 			PetBuyTask.buyTask();
@@ -229,8 +229,8 @@ public class PetBuy {
 			return FAIL;
 		}
 
-		// VerCode verCode = VerCodeTask.getVerCodeInfo(user);
-		VerCode verCode = VerCodeTask.getVerCode(user, pet);
+		VerCode verCode = VerCodeTask.getVerCodeInfo(user);
+		// VerCode verCode = VerCodeTask.getVerCode(user, pet);
 		if (verCode == null || petCache.contains(pet.getPetId())) {
 			logger.error("验证码获取失败！");
 			return FAIL;
@@ -304,7 +304,7 @@ public class PetBuy {
 		JSONObject jsonResult = HttpUtil.post(PetConstant.IS_APPEND_OPEN, data, user);
 
 		if (jsonResult != null) {
-//			logger.info("isAppendOpen返回=" + jsonResult.toString());
+			// logger.info("isAppendOpen返回=" + jsonResult.toString());
 		}
 
 	}
