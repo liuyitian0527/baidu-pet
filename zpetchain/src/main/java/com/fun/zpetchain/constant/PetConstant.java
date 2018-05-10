@@ -117,7 +117,7 @@ public class PetConstant {
 
 	/** 下架 */
 	public final static String CANCEL_SALE_PET = "https://pet-chain.baidu.com/data/market/unsalePet";
-	
+
 	public final static String IS_APPEND_OPEN = "https://pet-chain.baidu.com/data/pet/isAppendOpen";
 
 	/** 获取宠物信息 */
@@ -131,12 +131,12 @@ public class PetConstant {
 	/**
 	 * 天使卖出加价金额
 	 */
-	public final static Integer ANGEL_RAISE = 4000;
+	public final static Integer ANGEL_RAISE = 5000;
 
 	/**
 	 * 白眉斗眼卖出加价金额
 	 */
-	public final static Integer WHITE_EYES = 6000;
+	public final static Integer WHITE_EYES = 10000;
 
 	/**
 	 * 超级稀有买入加价

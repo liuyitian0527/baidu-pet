@@ -177,8 +177,8 @@ public class PetSale {
 	}
 
 	public static String getSalePetAmount(Pet pet) {
-		if ("2000515433418264855".equals(pet.getPetId())) {
-			return "340000";
+		if ("2115201024550210286".equals(pet.getPetId())) {
+			return "880000";
 		}
 
 		String k = pet.getRareDegree() + "_" + pet.getGeneration() + "_" + pet.getCoolingInterval() + "_" + pet.getRareNum() + "稀";
