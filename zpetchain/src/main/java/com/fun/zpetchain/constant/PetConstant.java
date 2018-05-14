@@ -40,7 +40,7 @@ public class PetConstant {
 	/**
 	 * 市场列表刷新时间
 	 */
-	public final static int BUY_INTERVAL = 300;
+	public final static int BUY_INTERVAL = 500;
 
 	/**
 	 * 请求超时时间（毫秒）
@@ -147,10 +147,10 @@ public class PetConstant {
 
 	static {
 		// key = 史诗_1代_2天_4稀
-		SALE_AMOUNT.put("史诗_0_0分钟_4稀", 7800);
-		SALE_AMOUNT.put("史诗_0_24小时_4稀", 6500);
-		SALE_AMOUNT.put("史诗_0_2天_4稀", 6200);
-		SALE_AMOUNT.put("史诗_0_4天_4稀", 5800);
+		SALE_AMOUNT.put("史诗_0_0分钟_4稀", 8800);
+		SALE_AMOUNT.put("史诗_0_24小时_4稀", 7500);
+		SALE_AMOUNT.put("史诗_0_2天_4稀", 7200);
+		SALE_AMOUNT.put("史诗_0_4天_4稀", 6800);
 
 		SALE_AMOUNT.put("史诗_1_0分钟_4稀", 4800);
 		SALE_AMOUNT.put("史诗_1_24小时_4稀", 4600);
