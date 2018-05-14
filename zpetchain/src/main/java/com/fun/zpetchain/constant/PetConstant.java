@@ -40,7 +40,7 @@ public class PetConstant {
 	/**
 	 * 市场列表刷新时间
 	 */
-	public final static int BUY_INTERVAL = 300;
+	public final static int BUY_INTERVAL = 500;
 
 	/**
 	 * 请求超时时间（毫秒）
@@ -147,18 +147,18 @@ public class PetConstant {
 
 	static {
 		// key = 史诗_1代_2天_4稀
-		SALE_AMOUNT.put("史诗_0_0分钟_4稀", 7800);
-		SALE_AMOUNT.put("史诗_0_24小时_4稀", 6500);
-		SALE_AMOUNT.put("史诗_0_2天_4稀", 6200);
-		SALE_AMOUNT.put("史诗_0_4天_4稀", 5800);
+		SALE_AMOUNT.put("史诗_0_0分钟_4稀", 12000);
+		SALE_AMOUNT.put("史诗_0_24小时_4稀", 8500);
+		SALE_AMOUNT.put("史诗_0_2天_4稀", 8200);
+		SALE_AMOUNT.put("史诗_0_4天_4稀", 7800);
 
-		SALE_AMOUNT.put("史诗_1_0分钟_4稀", 4800);
-		SALE_AMOUNT.put("史诗_1_24小时_4稀", 4600);
-		SALE_AMOUNT.put("史诗_1_2天_4稀", 4400);
-		SALE_AMOUNT.put("史诗_1_4天_4稀", 4100);
+		SALE_AMOUNT.put("史诗_1_0分钟_4稀", 6800);
+		SALE_AMOUNT.put("史诗_1_24小时_4稀", 6600);
+		SALE_AMOUNT.put("史诗_1_2天_4稀", 5400);
+		SALE_AMOUNT.put("史诗_1_4天_4稀", 5100);
 
-		SALE_AMOUNT.put("史诗_2_0分钟_4稀", 4700);
-		SALE_AMOUNT.put("史诗_2_24小时_4稀", 4500);
+		SALE_AMOUNT.put("史诗_2_0分钟_4稀", 6700);
+		SALE_AMOUNT.put("史诗_2_24小时_4稀", 5500);
 		SALE_AMOUNT.put("史诗_2_2天_4稀", 4400);
 		SALE_AMOUNT.put("史诗_2_4天_4稀", 4100);
 
@@ -167,15 +167,15 @@ public class PetConstant {
 		SALE_AMOUNT.put("史诗_0_2天_5稀", 35000);
 		SALE_AMOUNT.put("史诗_0_4天_5稀", 32000);
 
-		SALE_AMOUNT.put("史诗_1_0分钟_5稀", 28000);
-		SALE_AMOUNT.put("史诗_1_24小时_5稀", 27000);
+		SALE_AMOUNT.put("史诗_1_0分钟_5稀", 32000);
+		SALE_AMOUNT.put("史诗_1_24小时_5稀", 28000);
 		SALE_AMOUNT.put("史诗_1_2天_5稀", 26000);
 		SALE_AMOUNT.put("史诗_1_4天_5稀", 24000);
 
-		SALE_AMOUNT.put("史诗_2_0分钟_5稀", 23000);
-		SALE_AMOUNT.put("史诗_2_24小时_5稀", 22000);
-		SALE_AMOUNT.put("史诗_2_2天_5稀", 20000);
-		SALE_AMOUNT.put("史诗_2_4天_5稀", 19000);
+		SALE_AMOUNT.put("史诗_2_0分钟_5稀", 28000);
+		SALE_AMOUNT.put("史诗_2_24小时_5稀", 27000);
+		SALE_AMOUNT.put("史诗_2_2天_5稀", 25000);
+		SALE_AMOUNT.put("史诗_2_4天_5稀", 22000);
 
 		SALE_AMOUNT.put("史诗_3_0分钟_4稀", 6400);
 		SALE_AMOUNT.put("史诗_3_0分钟_5稀", 23000);
