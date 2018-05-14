@@ -177,7 +177,7 @@ public class SuperRareBuyTask {
 								} else if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell()) {
 									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 6000;
 								} else {
-									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 1000;
+									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 700;
 								}
 							}
 						}
