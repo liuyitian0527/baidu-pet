@@ -136,7 +136,7 @@ public class PetConstant {
 	/**
 	 * 白眉斗眼卖出加价金额
 	 */
-	public final static Integer WHITE_EYES = 18000;
+	public final static Integer WHITE_EYES = 30000;
 
 	/**
 	 * 超级稀有买入加价
