@@ -62,7 +62,7 @@ public class PetBuy {
 			// ShareBuyTask.initBuySharePet();
 
 			// 10分后自动上下架
-			 PetSale.saleTask(1000 * 60 * 5, 1000 * 60 * 15);
+			PetSale.saleTask(1000 * 60 * 5, 1000 * 60 * 15);
 
 			// 间隔刷新市场列表&购买命中
 			PetBuyTask.buyTask();
@@ -200,6 +200,10 @@ public class PetBuy {
 			if (System.currentTimeMillis() % 5 == 0) {
 				System.out.println(String.format(user.getName() + "  %s: 售价:%s, 等级:%s %s, 休息:%s, petId:%s", sortType, petPrt.getAmount(),
 						petPrt.getRareDegree(), petPrt.getGeneration() + "代", petPrt.getCoolingInterval(), petPrt.getPetId()));
+			}
+
+			if (petPrt.getRareDegree().equals("史诗")) {
+				petPrt.setAmount(petPrt.getAmount() - 3000);
 			}
 
 			if (new BigDecimal(petPrt.getAmount()).compareTo(BigDecimal.ZERO) <= 0 || petPrt.getAmount() <= 0) {
