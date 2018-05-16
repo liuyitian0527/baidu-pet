@@ -108,25 +108,25 @@ public class SuperRareBuyTask {
 						// 0代
 						if (pInfo.getGeneration() == 0) {
 							if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell() && pInfo.getIsYingTao()) {
-								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 100000;
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 500000;
 							} else if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell()) {
-								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 40000;
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 80000;
 							} else if (pInfo.getIsWhiteEyes()) {
-								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 20000;
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 40000;
 							} else if (pInfo.getIsAngell()) {
-								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 15000;
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 30000;
 							} else {
-								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 10000;
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 11000;
 							}
 						}
 						// 1代
 						else if (pInfo.getGeneration() == 1) {
 							if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell() && pInfo.getIsYingTao()) {
-								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 50000;
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 200000;
 							} else if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell()) {
-								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 20000;
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 60000;
 							} else if (pInfo.getIsWhiteEyes()) {
-								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 13000;
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 40000;
 							} else if (pInfo.getIsAngell()) {
 								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 10000;
 							} else {
@@ -149,9 +149,9 @@ public class SuperRareBuyTask {
 								if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell() && pInfo.getIsYingTao()) {
 									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 200000;
 								} else if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell()) {
-									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 50000;
+									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 70000;
 								} else if (pInfo.getIsWhiteEyes()) {
-									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 10000;
+									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 15000;
 								} else if (pInfo.getIsAngell()) {
 									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 6000;
 								} else {
@@ -161,9 +161,9 @@ public class SuperRareBuyTask {
 							// 1代
 							else if (pInfo.getGeneration() == 1) {
 								if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell() && pInfo.getIsYingTao()) {
-									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 70000;
+									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 150000;
 								} else if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell()) {
-									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 2000;
+									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 20000;
 								} else if (pInfo.getIsWhiteEyes()) {
 									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 4300;
 								} else if (pInfo.getIsAngell()) {
@@ -173,7 +173,7 @@ public class SuperRareBuyTask {
 								}
 							} else {
 								if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell() && pInfo.getIsYingTao()) {
-									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 40000;
+									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 100000;
 								} else if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell()) {
 									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 16000;
 								} else {
