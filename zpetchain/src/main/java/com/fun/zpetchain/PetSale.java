@@ -19,7 +19,7 @@ public class PetSale {
 	private static Logger logger = Logger.getLogger(PetSale.class);
 
 	public static void main(String[] args) {
-//		saleTask(0, 1000000000);
+		// saleTask(0, 1000000000);
 		User user = PetConstant.USERS.get(1);
 		Pet p = new Pet();
 		p.setPetId("1896036299490020746");
@@ -100,13 +100,13 @@ public class PetSale {
 					System.out.println("预上架失败：" + result);
 				}
 				// 密码确认
-//				String params2 = getSalePetConfirmParams(pet, amount);
-//				JSONObject result2 = HttpUtil.post(PetConstant.SALE_PET_CONFIRM, params2, user);
-//				if (PetConstant.SUCCESS.equals(result2.getString("errorNo"))) {
-//					System.out.println("上架成功: " + pet.getAmount());
-//				} else {
-//					System.out.println("上架失败：" + result);
-//				}
+				// String params2 = getSalePetConfirmParams(pet, amount);
+				// JSONObject result2 = HttpUtil.post(PetConstant.SALE_PET_CONFIRM, params2, user);
+				// if (PetConstant.SUCCESS.equals(result2.getString("errorNo"))) {
+				// System.out.println("上架成功: " + pet.getAmount());
+				// } else {
+				// System.out.println("上架失败：" + result);
+				// }
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -189,34 +189,34 @@ public class PetSale {
 			// 天使 + 白眉 + 樱桃
 			if (pet.getIsAngell() && pet.getIsWhiteEyes() && pet.getIsYingTao()) {
 				if (pet.getRareNum() > 4 && pet.getRareNum() % 2 == 1) {
-					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 200;
-				} else {
 					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 100;
+				} else {
+					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 50;
 				}
 			}
 			// 天使 + 白眉
 			else if (pet.getIsAngell() && pet.getIsWhiteEyes()) {
 				if (pet.getRareNum() > 4 && pet.getRareNum() % 2 == 1) {
-					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 20;
+					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 10;
 				} else {
-					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 7;
+					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 4;
 				}
 			}
 			// 天使+ 樱桃
 			else if (pet.getIsAngell() && pet.getIsYingTao()) {
 				if (pet.getRareNum() > 4 && pet.getRareNum() % 2 == 1) {
-					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 20;
+					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 10;
 				} else {
-					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 7;
+					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 4;
 				}
 			}
 
 			// 白眉 + 樱桃
 			else if (pet.getIsWhiteEyes() && pet.getIsYingTao()) {
 				if (pet.getRareNum() > 4 && pet.getRareNum() % 2 == 1) {
-					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 20;
+					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 10;
 				} else {
-					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 7;
+					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 4;
 				}
 			}
 
@@ -224,7 +224,7 @@ public class PetSale {
 				if (pet.getRareNum() > 4 && pet.getRareNum() % 2 == 1) {
 					amount = amount + PetConstant.ANGEL_RAISE / (pet.getGeneration() + 1) * (pet.getGeneration() + 4);
 				} else {
-					amount = amount + PetConstant.ANGEL_RAISE;
+					amount = amount + PetConstant.ANGEL_RAISE - pet.getGeneration() * 500;
 				}
 				System.out.println(k + "_" + "........天使宠物...售价" + amount);
 			}
@@ -233,7 +233,7 @@ public class PetSale {
 				if (pet.getRareNum() > 4 && pet.getRareNum() % 2 == 1) {
 					amount = amount + PetConstant.WHITE_EYES / (pet.getGeneration() + 1) * (pet.getGeneration() + 4);
 				} else {
-					amount = amount + PetConstant.WHITE_EYES;
+					amount = amount + PetConstant.WHITE_EYES - pet.getGeneration() * 500;
 				}
 				System.out.println(k + "_" + "........白眉斗眼宠物...售价" + amount);
 			}
@@ -242,7 +242,7 @@ public class PetSale {
 				if (pet.getRareNum() > 4 && pet.getRareNum() % 2 == 1) {
 					amount = amount + PetConstant.WHITE_EYES / (pet.getGeneration() + 1) * (pet.getGeneration() + 4);
 				} else {
-					amount = amount + PetConstant.WHITE_EYES / 4;
+					amount = amount + PetConstant.WHITE_EYES / 3 - pet.getGeneration() * 500;
 				}
 				System.out.println(k + "_" + "........樱桃宠物...售价" + amount);
 			}
