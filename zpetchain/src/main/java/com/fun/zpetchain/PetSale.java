@@ -184,7 +184,7 @@ public class PetSale {
 			return "1900000";
 		}
 		if ("2000517013966255773".equals(pet.getPetId())) {
-			return "1500000";
+			return "800000";
 		}
 		if ("2115201024550210286".equals(pet.getPetId())) {
 			return "880000";

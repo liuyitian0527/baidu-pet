@@ -151,7 +151,7 @@ public class SuperRareBuyTask {
 						}
 
 						int cooling = Integer.parseInt(coolingInterval.replaceAll("天", ""));
-						if (cooling > 0) {
+						if (cooling > 0 && superAmount - cooling * 10000 > 0) {
 							superAmount = superAmount - cooling * 10000;
 						}
 
