@@ -177,6 +177,12 @@ public class PetSale {
 	}
 
 	public static String getSalePetAmount(Pet pet) {
+		if ("1973672678091063174".equals(pet.getPetId())) {
+			return "1900000";
+		}
+		if ("2000517013966255773".equals(pet.getPetId())) {
+			return "1500000";
+		}
 		if ("2115201024550210286".equals(pet.getPetId())) {
 			return "880000";
 		}
@@ -207,7 +213,7 @@ public class PetSale {
 				if (pet.getRareNum() > 4 && pet.getRareNum() % 2 == 1) {
 					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 10;
 				} else {
-					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 4;
+					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 3;
 				}
 			}
 
@@ -216,7 +222,7 @@ public class PetSale {
 				if (pet.getRareNum() > 4 && pet.getRareNum() % 2 == 1) {
 					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 10;
 				} else {
-					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 4;
+					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 3;
 				}
 			}
 
