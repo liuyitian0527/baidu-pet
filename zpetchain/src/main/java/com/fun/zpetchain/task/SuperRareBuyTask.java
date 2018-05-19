@@ -149,6 +149,12 @@ public class SuperRareBuyTask {
 								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + PetConstant.SUPER_RARE_RAISE;
 							}
 						}
+
+						int cooling = Integer.parseInt(coolingInterval.replaceAll("天", ""));
+						if (cooling > 0) {
+							superAmount = superAmount - cooling * 10000;
+						}
+
 					}
 
 					// 天使、白眉

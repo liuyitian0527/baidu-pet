@@ -177,6 +177,9 @@ public class PetSale {
 	}
 
 	public static String getSalePetAmount(Pet pet) {
+		if ("2094895827922159308".equals(pet.getPetId())) {
+			return "300000";
+		}
 		if ("1973672678091063174".equals(pet.getPetId())) {
 			return "1900000";
 		}
@@ -195,9 +198,9 @@ public class PetSale {
 			// 天使 + 白眉 + 樱桃
 			if (pet.getIsAngell() && pet.getIsWhiteEyes() && pet.getIsYingTao()) {
 				if (pet.getRareNum() > 4 && pet.getRareNum() % 2 == 1) {
-					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 100;
-				} else {
 					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 50;
+				} else {
+					amount = amount + (PetConstant.ANGEL_RAISE + PetConstant.WHITE_EYES) * 10;
 				}
 			}
 			// 天使 + 白眉
