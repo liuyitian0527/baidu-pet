@@ -177,7 +177,7 @@ public class SuperRareBuyTask {
 								} else if (pInfo.getIsYingTao() && pInfo.getIsAngell()) {
 									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 30000;
 								} else if (pInfo.getIsWhiteEyes()) {
-									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 15000;
+									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 13000;
 								} else if (pInfo.getIsAngell()) {
 									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 6000;
 								} else {
@@ -195,7 +195,7 @@ public class SuperRareBuyTask {
 								} else if (pInfo.getIsYingTao() && pInfo.getIsAngell()) {
 									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 20000;
 								} else if (pInfo.getIsWhiteEyes()) {
-									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 3300;
+									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 2300;
 								} else if (pInfo.getIsAngell()) {
 									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 1000;
 								} else if (pInfo.getIsYingTao()) {
