@@ -154,6 +154,8 @@ public class SuperRareBuyTask {
 							if (cooling > 0 && superAmount - cooling * 30000 > 0) {
 								superAmount = superAmount - cooling * 30000;
 							}
+						} else if (coolingInterval.indexOf("小时") > -1) {
+							superAmount = superAmount - superAmount / 6;
 						}
 					}
 
