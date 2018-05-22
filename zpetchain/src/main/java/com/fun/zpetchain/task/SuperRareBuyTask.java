@@ -94,7 +94,7 @@ public class SuperRareBuyTask {
 
 					// 大于4天，不考虑
 					String coolingInterval = pInfo.getCoolingInterval();
-					if (coolingInterval.indexOf("天") > -1 && Integer.parseInt(coolingInterval.replaceAll("天", "")) > 4) {
+					if (coolingInterval.indexOf("天") > -1 && Integer.parseInt(coolingInterval.replaceAll("天", "")) >= 4) {
 						continue;
 					}
 
@@ -108,11 +108,11 @@ public class SuperRareBuyTask {
 						// 0代
 						if (pInfo.getGeneration() == 0) {
 							if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell() && pInfo.getIsYingTao()) {
-								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 1000000;
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 9000000;
 							} else if (pInfo.getIsWhiteEyes() && (pInfo.getIsAngell() || pInfo.getIsYingTao())) {
-								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 300000;
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 280000;
 							} else if (pInfo.getIsAngell() && pInfo.getIsYingTao()) {
-								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 180000;
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 150000;
 							} else if (pInfo.getIsWhiteEyes()) {
 								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 60000;
 							} else if (pInfo.getIsAngell()) {
@@ -126,7 +126,7 @@ public class SuperRareBuyTask {
 							if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell() && pInfo.getIsYingTao()) {
 								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 500000;
 							} else if (pInfo.getIsWhiteEyes() && (pInfo.getIsAngell() || pInfo.getIsYingTao())) {
-								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 150000;
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 140000;
 							} else if (pInfo.getIsAngell() && pInfo.getIsYingTao()) {
 								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 50000;
 							} else if (pInfo.getIsWhiteEyes()) {
@@ -140,7 +140,7 @@ public class SuperRareBuyTask {
 							if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell() && pInfo.getIsYingTao()) {
 								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 400000;
 							} else if (pInfo.getIsWhiteEyes() && (pInfo.getIsAngell() || pInfo.getIsYingTao())) {
-								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 100000;
+								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 80000;
 							} else if (pInfo.getIsAngell() && pInfo.getIsYingTao()) {
 								superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 40000;
 							} else if (pInfo.getIsWhiteEyes()) {
@@ -197,7 +197,7 @@ public class SuperRareBuyTask {
 								} else if (pInfo.getIsAngell()) {
 									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 1000;
 								} else if (pInfo.getIsYingTao()) {
-									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree());
+									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) - 400;
 								} else {
 									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 700;
 								}
