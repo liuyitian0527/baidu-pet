@@ -169,11 +169,11 @@ public class SuperRareBuyTask {
 							// 0代
 							if (pInfo.getGeneration() == 0) {
 								if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell() && pInfo.getIsYingTao()) {
-									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 200000;
+									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 300000;
 								} else if (pInfo.getIsWhiteEyes() && pInfo.getIsAngell()) {
-									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 60000;
+									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 55000;
 								} else if (pInfo.getIsWhiteEyes() && pInfo.getIsYingTao()) {
-									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 50000;
+									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 45000;
 								} else if (pInfo.getIsYingTao() && pInfo.getIsAngell()) {
 									superAmount = PetConstant.LIMIT_MAP.get(pInfo.getRareDegree()) + 30000;
 								} else if (pInfo.getIsWhiteEyes()) {
