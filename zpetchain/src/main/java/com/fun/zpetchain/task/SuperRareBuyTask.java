@@ -97,6 +97,9 @@ public class SuperRareBuyTask {
 					if (coolingInterval.indexOf("天") > -1 && Integer.parseInt(coolingInterval.replaceAll("天", "")) >= 4) {
 						continue;
 					}
+					if (pInfo.getGeneration() >= 3) {
+						continue;
+					}
 
 					Integer superAmount = 0;
 					String succStr = "【超级稀有】购买成功:";
